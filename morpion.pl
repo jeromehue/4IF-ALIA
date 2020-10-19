@@ -4,13 +4,7 @@
 % e.g., board([_,_,'x',_,_,_,_,’o’,_]) after the second round
 % ... until someone wins or the board is fully instanciated
 
-% Predicate to get the next player
-changePlayer('x','o').
-changePlayer('o','x').
-
-% Check if all the elements of the List (the board) are instanciated
-isBoardFull([]).
-isBoardFull([H|T]) :‐ nonvar(H), isBoardFull(T).
+:‐ dynamic board/1.
 
 % Test is the game is finished
 gameover(Winner) :‐ board(Board), winner(Board,Winner), !.
@@ -26,6 +20,10 @@ winner(Board, P) :‐ Board = [_,_,P,_,_,Q,_,_,R], P==Q, Q==R, nonvar(P).
 winner(Board, P) :‐ Board = [P,_,_,_,Q,_,_,_,R], P==Q, Q==R, nonvar(P).
 winner(Board, P) :‐ Board = [_,_,P,_,Q,_,R,_,_], P==Q, Q==R, nonvar(P).
 
+% Check if all the elements of the List (the board) are instanciated
+isBoardFull([]).
+isBoardFull([H|T]):‐ nonvar(H), isBoardFull(T).
+
 % Artificial intelligence
 ia(Board, Index,_) :‐
     repeat,
@@ -35,12 +33,8 @@ ia(Board, Index,_) :‐
     !.
 
 % Game is over, we cut to stop the search, and display the winner.
-play(_) :‐
-    gameover(Winner),
-    !,
-    write('Game is Over. Winner: '),
-    writeln(Winner),
-    displayBoard.
+play(_) :‐ gameover(Winner), !, write('Game is Over. Winner: '),
+writeln(Winner), displayBoard.
 
 % The game is not over, we play the next turn
 play(Player) :‐ write('New turn for:'), writeln(Player),
@@ -60,6 +54,10 @@ playMove(Board,Move,NewBoard,Player) :‐
 % Remove old board ‐ save new on in the knowledge base
 applyIt(Board,NewBoard) :‐
     retract(board(Board)), assert(board(NewBoard)).
+
+% Predicate to get the next player
+changePlayer('x','o').
+changePlayer('o','x').
 
 % Print the value of the board at index N (?, x or o)
 printVal(N) :‐ board(B), nth0(N,B,Val), var(Val), write('?'), !.
