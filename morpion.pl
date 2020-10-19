@@ -3,29 +3,28 @@
 % e.g., board([_,_,'x',_,_,_,_,_,_]) after the first round
 % e.g., board([_,_,'x',_,_,_,_,’o’,_]) after the second round
 % ... until someone wins or the board is fully instanciated
-
-:‐ dynamic board/1.
+:- dynamic board/1.
 
 % Test is the game is finished
-gameover(Winner) :‐ board(Board), winner(Board,Winner), !.
-gameover('Draw') :‐ board(Board), isBoardFull(Board).
+gameover(Winner) :- board(Board), winner(Board,Winner), !.
+gameover('Draw') :- board(Board), isBoardFull(Board).
 
 % Test if a Board is a winning configuration for player P.
-winner(Board, P) :‐ Board = [P,Q,R,_,_,_,_,_,_], P==Q, Q==R, nonvar(P).
-winner(Board, P) :‐ Board = [_,_,_,P,Q,R,_,_,_], P==Q, Q==R, nonvar(P).
-winner(Board, P) :‐ Board = [_,_,_,_,_,_,P,Q,R], P==Q, Q==R, nonvar(P).
-winner(Board, P) :‐ Board = [P,_,_,Q,_,_,R,_,_], P==Q, Q==R, nonvar(P).
-winner(Board, P) :‐ Board = [_,P,_,_,Q,_,_,R,_], P==Q, Q==R, nonvar(P).
-winner(Board, P) :‐ Board = [_,_,P,_,_,Q,_,_,R], P==Q, Q==R, nonvar(P).
-winner(Board, P) :‐ Board = [P,_,_,_,Q,_,_,_,R], P==Q, Q==R, nonvar(P).
-winner(Board, P) :‐ Board = [_,_,P,_,Q,_,R,_,_], P==Q, Q==R, nonvar(P).
+winner(Board, P) :- Board = [P,Q,R,_,_,_,_,_,_], P==Q, Q==R, nonvar(P).
+winner(Board, P) :- Board = [_,_,_,P,Q,R,_,_,_], P==Q, Q==R, nonvar(P).
+winner(Board, P) :- Board = [_,_,_,_,_,_,P,Q,R], P==Q, Q==R, nonvar(P).
+winner(Board, P) :- Board = [P,_,_,Q,_,_,R,_,_], P==Q, Q==R, nonvar(P).
+winner(Board, P) :- Board = [_,P,_,_,Q,_,_,R,_], P==Q, Q==R, nonvar(P).
+winner(Board, P) :- Board = [_,_,P,_,_,Q,_,_,R], P==Q, Q==R, nonvar(P).
+winner(Board, P) :- Board = [P,_,_,_,Q,_,_,_,R], P==Q, Q==R, nonvar(P).
+winner(Board, P) :- Board = [_,_,P,_,Q,_,R,_,_], P==Q, Q==R, nonvar(P).
 
 % Check if all the elements of the List (the board) are instanciated
 isBoardFull([]).
-isBoardFull([H|T]):‐ nonvar(H), isBoardFull(T).
+isBoardFull([H|T]) :- nonvar(H), isBoardFull(T).
 
 % Artificial intelligence
-ia(Board, Index,_) :‐
+ia(Board, Index,_) :-
     repeat,
     Index is random(9),
     nth0(Index, Board, Elem),
@@ -33,11 +32,11 @@ ia(Board, Index,_) :‐
     !.
 
 % Game is over, we cut to stop the search, and display the winner.
-play(_) :‐ gameover(Winner), !, write('Game is Over. Winner: '),
+play(_) :- gameover(Winner), !, write('Game is Over. Winner: '),
 writeln(Winner), displayBoard.
 
 % The game is not over, we play the next turn
-play(Player) :‐ write('New turn for:'), writeln(Player),
+play(Player) :- write('New turn for:'), writeln(Player),
     board(Board),
     displayBoard,
     ia(Board, Move, Player),
@@ -48,11 +47,11 @@ play(Player) :‐ write('New turn for:'), writeln(Player),
 
 % Play a Move, the new Board will be the same,
 % but one value will be instanciated with the Move
-playMove(Board,Move,NewBoard,Player) :‐
+playMove(Board,Move,NewBoard,Player) :-
     Board=NewBoard, nth0(Move,NewBoard,Player).
 
 % Remove old board ‐ save new on in the knowledge base
-applyIt(Board,NewBoard) :‐
+applyIt(Board,NewBoard) :-
     retract(board(Board)), assert(board(NewBoard)).
 
 % Predicate to get the next player
@@ -60,11 +59,11 @@ changePlayer('x','o').
 changePlayer('o','x').
 
 % Print the value of the board at index N (?, x or o)
-printVal(N) :‐ board(B), nth0(N,B,Val), var(Val), write('?'), !.
-printVal(N) :‐ board(B), nth0(N,B,Val), write(Val).
+printVal(N) :- board(B), nth0(N,B,Val), var(Val), write('?'), !.
+printVal(N) :- board(B), nth0(N,B,Val), write(Val).
 
 % Display the board
-displayBoard :‐
+displayBoard :-
     writeln('*‐‐‐‐‐‐‐‐‐‐*'),
     printVal(0), printVal(1), printVal(2), writeln(''),
     printVal(3), printVal(4), printVal(5), writeln(''),
@@ -72,4 +71,4 @@ displayBoard :‐
     writeln('*‐‐‐‐‐‐‐‐‐‐*').
 
 % Start the game!
-init :‐ length(Board,9), assert(board(Board)), play('x').
+init :- length(Board,9), assert(board(Board)), play('x').
