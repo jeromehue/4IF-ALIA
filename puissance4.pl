@@ -17,13 +17,13 @@
 
 
 % Create board of 6 lines and 7 columns.
-create(board([  ['-','-','-','-','-','O'],
-	            ['-','-','-','-','X','O'],
-	            ['-','-','-','-','-','X'],
-	            ['-','-','-','-','-','0'],
-	            ['-','-','-','-','-','X'],
-	            ['-','-','-','-','-','-'],
-	            ['-','-','-','-','-','-']   ])).
+create(board([  ['1','-','-','-','-','O'],
+	            ['2','-','-','-','X','O'],
+	            ['3','-','-','-','-','X'],
+	            ['4','-','-','-','-','0'],
+	            ['5','-','-','-','-','X'],
+	            ['6','-','-','-','-','-'],
+	            ['7','-','-','-','-','-']   ])).
 
 
 
@@ -59,8 +59,20 @@ play(Player) :- write('New turn for player : '), writeln(Player),
 
 % Jouer un coup. 
 
+% Colonne is winning
+
 
 %Initialisation
 init :- create(X), show(X).
+
+premierElement([X]) :- write(X).
+premierElement([H|T]) :- nl,
+                         write(H),
+                         premierElement(T).
+
+
+extract(ColNumber, Matrix, Column) :-
+    maplist(nth0(ColNumber), Matrix, Column),
+    write(Column).
 
 
