@@ -62,18 +62,69 @@ diagonal2(Board, EI, LI , FINAL) :-
                             % Get list
                             nth1(LI, Board,  L),
                             nth1(EI, L, X),
-                            write(X),nl,
+                            %write(X),nl,
                             append(FINAL, [X], F),
-                            write(F),nl,
+                            %write(F),nl,
                             incr(EI, NEI),
                             incr(LI, NLI),
                             diagonal2(Board, NEI, NLI, F).
 
-diagonal2(Board, 3, LI, FINAL) :- write("FIN\n").
+diagonal2(Board, 4, LI, FINAL) :- write(FINAL).
 
 diag3(Board) :- 
                 diagonal2(Board, 1, 1, []),
                 diagonal2(Board, 2, 1, []),
                 diagonal2(Board, 3, 1, []). 
 
-incr(X,X1) :- X1 is X+1. 
+
+
+
+
+% Mise à l'échelle des fonctions précédentes pour un tableau 6*7.
+
+%   On s'arrêtre lorsque l'on est en bout de ligne 
+%   (Car diagonales inférieurs pour le moment)
+%   Càd lorsque l'on veut chercher un 7eme élément.
+diagonal_unit_max_7(Board, EI,  7, F) :- write(F).
+%diagonal_unit_max_7(Board,  8, LI, F) :- write(F).
+diagonal_unit_max_7(Board, EI, LI, Final) :-
+                % On récupère la ligne
+                nth1(LI, Board,  L),
+                % On récupère l'élément sur la ligne
+                nth1(EI, L, X),
+                % Affichage
+                %write(X),nl,
+                % On ajoute l'élément à notre diagonale
+                append(Final, [X], F),
+                % Affichage
+                %write(F),nl,
+                % On incrémente l'index de l'élément (EI)
+                % et l'index de ligne (LI)
+                incr(EI, NEI),
+                incr(LI, NLI),
+                % et c'est reparti.
+                write("parameters : "), write(NEI), write(" , "), write(NLI), nl,
+                diagonal_unit_max_7(Board, NEI, NLI, F).
+
+% Renvoie une diagonal avec le 1er élément de la première liste, 
+%   le seconde de la seconde, etc...
+diag_max_7(Board) :- 
+    diagonal_unit_max_7([[a,b,c,d,e,f,g],[a,&,c,d,e,f,g],[h,i,j,k,l,m,n], [a,b,c,d,e,f,g], [a,b,c,d,e,f,g], [a,b,z,d,t,g,h] ], 1, 1, []).        
+% Copier/Coller pour tester : 
+%diag_max_7([[a,b,c,d,e,f,g],[a,&,c,d,e,f,g],[h,i,j,k,l,m,n], [a,b,c,d,e,f,g], [a,b,c,d,e,f,g], [a,b,z,d,t,g,h] ]).
+
+
+
+
+% Utilitary functions
+
+% Incrementation of a variable
+incr(X,X1) :- X1 is X+1.
+
+% Length of a list
+nlength([], 0).
+nlength([_|Xs] , L) :- nlength(Xs,N) , L is N+1.
+
+
+
+ 
