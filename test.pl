@@ -40,3 +40,40 @@ element(I, X, [H|T]) :-     write(T),nl,
 
 getTail([_|T], T).
 
+
+diagonal(Board) :- 
+            nth1(1, Board, L1), nth1(2, Board, L2), nth1(3, Board, L3),
+            write(L1),nl,
+            nth1(1, L1 ,X1),
+            write("1 of L1 : "), write(X1), nl,
+            nth1(2, L2, X2),
+            write("2 of L2 : "), write(X2), nl,
+            nth1(3, L3, X3),
+            write("3 of L3 : "), write(X3), nl,
+            nth1(2, L1, X21),
+            write("2 of L1 : "), write(X21), nl,
+            nth1(3, L2, X32),
+            write("3 of L2 : "), write(X32), nl,
+            nth1(3, L1, X31),
+            write("3 of L1 : "), write(X31), nl.
+
+
+diagonal2(Board, EI, LI , FINAL) :-
+                            % Get list
+                            nth1(LI, Board,  L),
+                            nth1(EI, L, X),
+                            write(X),nl,
+                            append(FINAL, [X], F),
+                            write(F),nl,
+                            incr(EI, NEI),
+                            incr(LI, NLI),
+                            diagonal2(Board, NEI, NLI, F).
+
+diagonal2(Board, 3, LI, FINAL) :- write("FIN\n").
+
+diag3(Board) :- 
+                diagonal2(Board, 1, 1, []),
+                diagonal2(Board, 2, 1, []),
+                diagonal2(Board, 3, 1, []). 
+
+incr(X,X1) :- X1 is X+1. 
