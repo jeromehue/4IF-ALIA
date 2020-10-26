@@ -56,7 +56,6 @@ iShowLine([[X|X2]|XS],[X2|XS2]):-
 	iShowLine(XS,XS2).
 
 
-
 % Game is over, we cut to stop the search, and display the winner.
 % TBD
 %play(_, Board) :- gameover(Winner), !, write('Game is Over. Winner: '), writeln(Winner), show(Board).
@@ -109,19 +108,6 @@ applyMoveBoard(Board, NewBoard, Col, NewCol, Move) :-
 changePlayer('X', 'O').
 changePlayer('O', 'X').
 
-
-
-% Colonne is winning
-
-winnerColonne([Y|B],X):-Y==X,B=[X,X,X|_];winnerColonne(B,X).
-
-
-extract(ColNumber, Matrix, Column) :- maplist(nth0(ColNumber), Matrix, Column).
-
-winnerLigne1(Board,X,Num):-extract(Num,Board,L1),winnerColonne(L1,X).
-winnerLigne2(Board,X):-winnerLigne1(Board,X,0);winnerLigne1(Board,X,1);winnerLigne1(Board,X,2);winnerLigne1(Board,X,3);winnerLigne1(Board,X,4);winnerLigne1(Board,X,5);winnerLigne1(Board,X,6);winnerLigne1(Board,X,7).
-
-
 %Initialisation
 init :- create(board(B)), play('X', B).
 
@@ -136,3 +122,24 @@ take(N, [H|TA], [H|TB]) :-
 	N > 0,
 	N2 is N - 1,
 	take(N2, TA, TB).
+	
+
+premierElement([X]) :- write(X).
+premierElement([H|T]) :- 
+	nl,
+	write(H),
+ 	premierElement(T).
+
+extract(ColNumber, Matrix, Column) :-
+    maplist(nth0(ColNumber), Matrix, Column),
+    write(Column).
+	
+	
+% Colonne is winning
+
+winnerColonne([Y|B],X):-Y==X,B=[X,X,X|_];winnerColonne(B,X).
+
+% Line is winning
+
+winnerLigne1(Board,X,Num):-extract(Num,Board,L1),winnerColonne(L1,X).
+winnerLigne2(Board,X):-winnerLigne1(Board,X,0);winnerLigne1(Board,X,1);winnerLigne1(Board,X,2);winnerLigne1(Board,X,3);winnerLigne1(Board,X,4);winnerLigne1(Board,X,5);winnerLigne1(Board,X,6);winnerLigne1(Board,X,7).
