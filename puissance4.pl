@@ -27,11 +27,14 @@ create(board([  ['-','-','-','-','-','-'],
 	            ['-','-','-','-','-','-'],
 	            ['-','-','-','-','-','-']   ])).
 
-
-
+humanOrAI([P1|P2]):- 
+	writeln("Write H if the first player is human, C instead."),
+	get_char(P1),
+	get_code(_),
+	writeln("Write H if the second player is human, C instead."),
+	get_char(P2).
+	
 % Display bord.
-
-
 
 %show(X) shows board X
 show(board(X)):- write('  A B C D E F G'), nl,
@@ -61,35 +64,56 @@ iShowLine([[X|X2]|XS],[X2|XS2]):-
 %play(_, Board) :- gameover(Winner), !, write('Game is Over. Winner: '), writeln(Winner), show(Board).
 
 % The game is not over, we play the next turn
-play(Player, Board) :- write('New turn for : '), writeln(Player),
-	show(board(Board)),
-	%ia(Board, Move, Player),
-	read(Move),
+play(Player, Board, Human) :- 
+	write('New turn for : '), writeln(Player),
+	%show(board(Board)),
+	currentMove(Human, Player, Move, Board),
 	writeln(Move),
 %	writeln("BOARD OK"),
-	%isValidMove(Board, Move),
-	getIndexForMove(Board, Move, Index),
+%	isValidMove(Board, Move),
+	indexForMove(Board, Move, Index),
 	playMove(Board, NewBoard, Move, Player, Index),
 %	writeln("MOVE OK"),
 	changePlayer(Player,NextPlayer),
 %	writeln("CHANGE OK"),
-	play(NextPlayer, NewBoard).
+	play(NextPlayer, NewBoard, Human).
 
-% colonneN(Board, n, Col) returns n-th column of board in Col
-colonneN([T|_],0,T).
-colonneN([_|Q],C,X) :-
-    C1 is C-1,
-    colonneN(Q,C1,X).
+% returns the move to be played
+currentMove([P1|_], Player, Move, _) :-
+	Player == 'X',
+	P1 == 'H',
+	writeln("Sur quelle colonne voulez-vous jouer ?"),
+	read(Move).
+
+currentMove([P1|_], Player, Move, Board) :-
+	Player == 'X',
+	P1 == 'C',
+	ia(Board, Move, Player).
+	
+currentMove([_|P2], Player, Move, _) :-
+	Player == 'O',
+	P2 == 'H',
+	writeln("Sur quelle colonne voulez-vous jouer ?"),
+	read(Move).
+	
+currentMove([_|P2], Player, Move, Board) :-
+	Player == 'O',
+	P2 == 'C',
+	ia(Board, Move, Player).
+	
+% stupid random IA not even checking if move is correct
+ia(_, Move, _) :-
+	random_between(0, 6, Move).
 
 % TBD
 %isValidMove() :-
 
 % returns the index of first empty space for a move
-getIndexForMove(Board, Move, Index) :-
-	Move<7, colonneN(Board, Move, Col), getIndexForColumn(Col, 0, Index).
+indexForMove(Board, Move, Index) :-
+	Move<7, colonneN(Board, Move, Col), indexForColumn(Col, 0, Index).
 
-getIndexForColumn([T|_], Index, Index) :- T = '-'.
-getIndexForColumn([_|H], Index, NewIndex) :- Tmp = Index+1, getIndexForColumn(H, Tmp, NewIndex).
+indexForColumn([T|_], Index, Index) :- T = '-'.
+indexForColumn([_|H], Index, NewIndex) :- Tmp = Index+1, indexForColumn(H, Tmp, NewIndex).
 	
 	
 
@@ -109,7 +133,8 @@ changePlayer('X', 'O').
 changePlayer('O', 'X').
 
 %Initialisation
-init :- create(board(B)), play('X', B).
+
+init :- create(board(B)), humanOrAI(Human), play('X', B, Human).
 
 
 % useful stuff
@@ -122,6 +147,13 @@ take(N, [H|TA], [H|TB]) :-
 	N > 0,
 	N2 is N - 1,
 	take(N2, TA, TB).
+	
+	
+% colonneN(Board, n, Col) returns n-th column of board in Col
+colonneN([T|_],0,T).
+colonneN([_|Q],C,X) :-
+    C1 is C-1,
+    colonneN(Q,C1,X).
 	
 
 premierElement([X]) :- write(X).
