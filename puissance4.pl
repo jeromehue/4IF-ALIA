@@ -45,21 +45,29 @@ displayBoard :-
     write(' '), display(4, 6), nl,
     write(' '), display(5, 6), nl.
 
-display(_, -1, _).
+
+display(_,_,Board) :-
+    nth0(0, Board, C),
+    winnerColonne(C, 'X'),
+    writeln(C),
+    write("Fin du jeu !"),
+    halt.
+
+display(_, 7, _).
 display(N, I, Board) :- 
     nth0(I, Board, Col),nth0(N, Col, Cell),
-    write(Cell), write('  '),J is I-1,display(N, J, Board).
+    write(Cell), write('  '),J is I+1,display(N, J, Board).
 
 % Display the board that is given
 displayBoard(Board) :-
     %write("Plain text"), write(Board), nl,
     nl, writeln(' A  B  C  D  E  F  G'),
-    write(' '), display(5, 6, Board), nl,
-    write(' '), display(4, 6, Board), nl,
-    write(' '), display(3, 6, Board), nl,
-    write(' '), display(2, 6, Board), nl,
-    write(' '), display(1, 6, Board), nl,
-    write(' '), display(0, 6, Board), nl.
+    write(' '), display(5, 0, Board), nl,
+    write(' '), display(4, 0, Board), nl,
+    write(' '), display(3, 0, Board), nl,
+    write(' '), display(2, 0, Board), nl,
+    write(' '), display(1, 0, Board), nl,
+    write(' '), display(0, 0, Board), nl.
 
 
 
@@ -90,8 +98,11 @@ play(Player, Board, Human) :-
 %	writeln('BOARD OK'),
 %	isValidMove(Board, Move),
 	indexForMove(Board, Move, Index),
-    writeln(Index),    
+%    writeln(Index),    
     playMove(Board, NewBoard, Move, Player, Index),
+
+    %colonneN(0, Board, C),
+    %winnerColonne(C, 'X'),
 %	writeln('MOVE OK'),
 	changePlayer(Player,NextPlayer),
 %	writeln('CHANGE OK'),
