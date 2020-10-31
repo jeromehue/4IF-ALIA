@@ -45,6 +45,24 @@ displayBoard :-
     write(' '), display(4, 6), nl,
     write(' '), display(5, 6), nl.
 
+display(_, -1, _).
+display(N, I, Board) :- 
+    nth0(I, Board, Col),nth0(N, Col, Cell),
+    write(Cell), write('  '),J is I-1,display(N, J, Board).
+
+% Display the board that is given
+displayBoard(Board) :-
+    %write("Plain text"), write(Board), nl,
+    nl, writeln(' A  B  C  D  E  F  G'),
+    write(' '), display(0, 6, Board), nl,
+    write(' '), display(1, 6, Board), nl,
+    write(' '), display(2, 6, Board), nl,
+    write(' '), display(3, 6, Board), nl,
+    write(' '), display(4, 6, Board), nl,
+    write(' '), display(5, 6, Board), nl.
+
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Initialisation des joueurs
 
@@ -65,8 +83,9 @@ humanOrAI([P1|P2]):-
 % The game is not over, we play the next turn
 play(Player, Board, Human) :- 
 	write('Au tour de : '), writeln(Player),
-    displayBoard,
-	currentMove(Human, Player, Move, Board),
+    %displayBoard,
+	displayBoard(Board),
+    currentMove(Human, Player, Move, Board),
 	writeln(Move),
 %	writeln('BOARD OK'),
 %	isValidMove(Board, Move),
@@ -124,6 +143,7 @@ applyMoveColumn(Col, NewCol, Index, Player) :-
 	
 applyMoveBoard(Board, NewBoard, Col, NewCol, Move) :-
 	take(Move, Board, T), append(T, [Col|H], Board), append(T, [NewCol|H], NewBoard).
+%   write(T), nl, write(NewBoard), nl.
 	%length(T, Move), H is [Col|Q], H2 is [NewCol|Q].
 
 changePlayer('X', 'O').
