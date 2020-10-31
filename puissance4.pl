@@ -43,8 +43,7 @@ displayBoard :-
     write(' '), display(2, 6), nl,
     write(' '), display(3, 6), nl,
     write(' '), display(4, 6), nl,
-    write(' '), display(5, 6), nl,
-    write(' '), display(6, 6), nl.
+    write(' '), display(5, 6), nl.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Initialisation des joueurs
