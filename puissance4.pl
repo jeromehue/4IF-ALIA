@@ -1,63 +1,63 @@
-% The game state is represented by a 2D array of 42 elements
-%   board ([['-','-','-','-','-','-'],
-%	        ['-','-','-','-','-','-'],
-%	        ['-','-','-','-','-','-'],
-%	        ['-','-','-','-','-','-'],
-%	        ['-','-','-','-','-','-'],
-%	        ['-','-','-','-','-','-'],
-%	        ['-','-','-','-','-','-']])) at the beginning.
-%   
-%   Schématisation : 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ALIA - Puissance 4 - Hexanôme 4414 %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Schématisation : 
 %   - emplacement vide inaccessible
 %   ? emplacement vide accessible
 %   o pion de l’adversaire
 %   x pion du joueur
 %   ! emplacement qui permet de faire un puissance 4
-%
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Création du plateau
+% à 6 lignes et 7 colonnes
+
+board([
+    [ '-',  '-',  '-',  '-',  '-', '?' ],
+    [ '-',  '-',  '-',  '-',  '-', '?' ],
+    [ '-',  '-',  '-',  '-',  '-', '?' ],
+    [ '-',  '-',  '-',  '-',  '-', '?' ],
+    [ '-',  '-',  '-',  '-',  '-', '?' ],
+    [ '-',  '-',  '-',  '-',  '-', '?' ],
+    [ '-',  '-',  '-',  '-',  '-', '?' ]
+]).
 :- dynamic board/1.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Affichage
 
-% Create board of 6 lines and 7 columns.
-create(board([  ['-','-','-','-','-','-'],
-	            ['-','-','-','-','-','-'],
-	            ['-','-','-','-','-','-'],
-	            ['-','-','-','-','-','-'],
-	            ['-','-','-','-','-','-'],
-	            ['-','-','-','-','-','-'],
-	            ['-','-','-','-','-','-']   ])).
+display(_, -1).
+display(N, I) :- 
+    board(Board),
+    nth0(I, Board, Col),
+    nth0(N, Col, Cell),
+    write(Cell), write('  '),
+    J is I-1,
+    display(N, J).
+
+displayBoard :- 
+    nl, writeln(' A  B  C  D  E  F  G'),
+    write(' '), display(0, 6), nl,
+    write(' '), display(1, 6), nl,
+    write(' '), display(2, 6), nl,
+    write(' '), display(3, 6), nl,
+    write(' '), display(4, 6), nl,
+    write(' '), display(5, 6), nl,
+    write(' '), display(6, 6), nl.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Initialisation des joueurs
 
 humanOrAI([P1|P2]):- 
-	writeln("Write H if the first player is human, C instead."),
+	writeln('Taper H si le joueur 1 est humain, C sinon :'),
 	get_char(P1),
 	get_code(_),
-	writeln("Write H if the second player is human, C instead."),
+	writeln('Taper H si le joueur 2 est humain, C sinon :'),
 	get_char(P2).
 	
-% Display bord.
-
-%show(X) shows board X
-show(board(X)):- write('  A B C D E F G'), nl,
-		 iShow(X,6).
-
-%show(X,N) shows lines [N .. 1] of board X
-iShow(_,0).
-iShow(X,N):- 
-	showLine(X,N,X2),
-    Ns is N-1,
-    iShow(X2,Ns).
-
-%showLine(X,N,X2) writes N and shows first line of board X (first element of every column). X2 is X without the shown line.
-showLine(X,N,X2):-  write(N), write(' '),
-		            iShowLine(X,X2), nl.
-
-%iShowLine(X,X2) writes first element of every column. X2 is X without the shown line.
-iShowLine([],_).
-iShowLine([[X|X2]|XS],[X2|XS2]):-
-	write(X),
-	write(' '),
-	iShowLine(XS,XS2).
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Jeu (à améliorer)
 
 % Game is over, we cut to stop the search, and display the winner.
 % TBD
@@ -65,24 +65,24 @@ iShowLine([[X|X2]|XS],[X2|XS2]):-
 
 % The game is not over, we play the next turn
 play(Player, Board, Human) :- 
-	write('New turn for : '), writeln(Player),
-	%show(board(Board)),
+	write('Au tour de : '), writeln(Player),
+    displayBoard,
 	currentMove(Human, Player, Move, Board),
 	writeln(Move),
-%	writeln("BOARD OK"),
+%	writeln('BOARD OK'),
 %	isValidMove(Board, Move),
 	indexForMove(Board, Move, Index),
 	playMove(Board, NewBoard, Move, Player, Index),
-%	writeln("MOVE OK"),
+%	writeln('MOVE OK'),
 	changePlayer(Player,NextPlayer),
-%	writeln("CHANGE OK"),
+%	writeln('CHANGE OK'),
 	play(NextPlayer, NewBoard, Human).
 
 % returns the move to be played
 currentMove([P1|_], Player, Move, _) :-
 	Player == 'X',
 	P1 == 'H',
-	writeln("Sur quelle colonne voulez-vous jouer ?"),
+	writeln('Sur quelle colonne voulez-vous jouer ?'),
 	read(Move).
 
 currentMove([P1|_], Player, Move, Board) :-
@@ -93,7 +93,7 @@ currentMove([P1|_], Player, Move, Board) :-
 currentMove([_|P2], Player, Move, _) :-
 	Player == 'O',
 	P2 == 'H',
-	writeln("Sur quelle colonne voulez-vous jouer ?"),
+	writeln('Sur quelle colonne voulez-vous jouer ?'),
 	read(Move).
 	
 currentMove([_|P2], Player, Move, Board) :-
@@ -115,8 +115,6 @@ indexForMove(Board, Move, Index) :-
 indexForColumn([T|_], Index, Index) :- T = '-'.
 indexForColumn([_|H], Index, NewIndex) :- Tmp = Index+1, indexForColumn(H, Tmp, NewIndex).
 	
-	
-
 playMove(Board, NewBoard, Move, Player, Index) :-
 	Index<7, colonneN(Board, Move, Col), applyMoveColumn(Col, NewCol, Index, Player), applyMoveBoard(Board, NewBoard, Col, NewCol, Move).
 	%;Index<7,NewIndex is Index+1, playMove(Board, NewBoard, Move, Player, NewIndex).
@@ -132,29 +130,31 @@ applyMoveBoard(Board, NewBoard, Col, NewCol, Move) :-
 changePlayer('X', 'O').
 changePlayer('O', 'X').
 
-%Initialisation
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Initialisation du jeu
 
-init :- create(board(B)), humanOrAI(Human), play('X', B, Human).
+init :-
+    board(Board),               % Récupération du plateau de jeu
+    humanOrAI(Player),          % Initialisation des joueurs
+    play('X', Board, Player).   % Début du jeu
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Prédicats utiles
 
-% useful stuff
-
-%Take the first N elements from List and unify this with FirstElements. 
-%The definition is based on the GNU-Prolog lists library. 
-%Implementation by Jan Wielemaker.
+% Take the first N elements from List and unify this with FirstElements. 
+% The definition is based on the GNU-Prolog lists library. 
+% Implementation by Jan Wielemaker.
 take(0, _, []) :- !.
 take(N, [H|TA], [H|TB]) :-
 	N > 0,
 	N2 is N - 1,
 	take(N2, TA, TB).
 	
-	
 % colonneN(Board, n, Col) returns n-th column of board in Col
 colonneN([T|_],0,T).
 colonneN([_|Q],C,X) :-
     C1 is C-1,
     colonneN(Q,C1,X).
-	
 
 premierElement([X]) :- write(X).
 premierElement([H|T]) :- 
@@ -166,12 +166,9 @@ extract(ColNumber, Matrix, Column) :-
     maplist(nth0(ColNumber), Matrix, Column),
     write(Column).
 	
-	
 % Colonne is winning
-
 winnerColonne([Y|B],X):-Y==X,B=[X,X,X|_];winnerColonne(B,X).
 
 % Line is winning
-
 winnerLigne1(Board,X,Num):-extract(Num,Board,L1),winnerColonne(L1,X).
 winnerLigne2(Board,X):-winnerLigne1(Board,X,0);winnerLigne1(Board,X,1);winnerLigne1(Board,X,2);winnerLigne1(Board,X,3);winnerLigne1(Board,X,4);winnerLigne1(Board,X,5);winnerLigne1(Board,X,6);winnerLigne1(Board,X,7).
