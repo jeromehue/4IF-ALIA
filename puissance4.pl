@@ -14,13 +14,13 @@
 % à 6 lignes et 7 colonnes
 
 board([
-    [ '-',  '-',  '-',  '-',  '-', '?' ],
-    [ '-',  '-',  '-',  '-',  '-', '?' ],
-    [ '-',  '-',  '-',  '-',  '-', '?' ],
-    [ '-',  '-',  '-',  '-',  '-', '?' ],
-    [ '-',  '-',  '-',  '-',  '-', '?' ],
-    [ '-',  '-',  '-',  '-',  '-', '?' ],
-    [ '-',  '-',  '-',  '-',  '-', '?' ]
+    [ '-',  '-',  '-',  '-',  '-', '-' ],
+    [ '-',  '-',  '-',  '-',  '-', '-' ],
+    [ '-',  '-',  '-',  '-',  '-', '-' ],
+    [ '-',  '-',  '-',  '-',  '-', '-' ],
+    [ '-',  '-',  '-',  '-',  '-', '-' ],
+    [ '-',  '-',  '-',  '-',  '-', '-' ],
+    [ '-',  '-',  '-',  '-',  '-', '-' ]
 ]).
 :- dynamic board/1.
 
@@ -54,12 +54,12 @@ display(N, I, Board) :-
 displayBoard(Board) :-
     %write("Plain text"), write(Board), nl,
     nl, writeln(' A  B  C  D  E  F  G'),
-    write(' '), display(0, 6, Board), nl,
-    write(' '), display(1, 6, Board), nl,
-    write(' '), display(2, 6, Board), nl,
-    write(' '), display(3, 6, Board), nl,
+    write(' '), display(5, 6, Board), nl,
     write(' '), display(4, 6, Board), nl,
-    write(' '), display(5, 6, Board), nl.
+    write(' '), display(3, 6, Board), nl,
+    write(' '), display(2, 6, Board), nl,
+    write(' '), display(1, 6, Board), nl,
+    write(' '), display(0, 6, Board), nl.
 
 
 
@@ -90,7 +90,8 @@ play(Player, Board, Human) :-
 %	writeln('BOARD OK'),
 %	isValidMove(Board, Move),
 	indexForMove(Board, Move, Index),
-	playMove(Board, NewBoard, Move, Player, Index),
+    writeln(Index),    
+    playMove(Board, NewBoard, Move, Player, Index),
 %	writeln('MOVE OK'),
 	changePlayer(Player,NextPlayer),
 %	writeln('CHANGE OK'),
