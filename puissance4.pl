@@ -46,21 +46,24 @@ displayBoard :-
     write(' '), display(5, 6), nl.
 
 
-checkall(Board) :-
-    nth0(0, Board, C),winnerColonne(C, 'X');
-    nth0(1, Board, C),winnerColonne(C, 'X');
-    nth0(2, Board, C),winnerColonne(C, 'X');
-    nth0(3, Board, C),winnerColonne(C, 'X');
-    nth0(4, Board, C),winnerColonne(C, 'X');
-    nth0(5, Board, C),winnerColonne(C, 'X');
-    nth0(6, Board, C),winnerColonne(C, 'X');
-    winnerLigne2(Board,'X').
+checkall(Board, Player) :-
+    nth0(0, Board, C),winnerColonne(C, Player);
+    nth0(1, Board, C),winnerColonne(C, Player);
+    nth0(2, Board, C),winnerColonne(C, Player);
+    nth0(3, Board, C),winnerColonne(C, Player);
+    nth0(4, Board, C),winnerColonne(C, Player);
+    nth0(5, Board, C),winnerColonne(C, Player);
+    nth0(6, Board, C),winnerColonne(C, Player);
+    winnerLigne2(Board,Player).
 
 
 % If someone is winning, stop.
 win(Board) :-
-    checkall(Board),
-    write('FIN'),nl,
+    checkall(Board, 'X'),
+	write('X a gagné !'),nl,write('FIN'),nl,
+    halt;
+	checkall(Board, 'O'),
+	write('O a gagné !'),nl,write('FIN'),nl,
     halt.
 
 display(_, 7, _).
@@ -95,63 +98,61 @@ humanOrAI([P1|P2]):-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Jeu (à améliorer)
 
-% Game is over, we cut to stop the search, and display the winner.
-% TBD
-%play(_, Board) :- gameover(Winner), !, write('Game is Over. Winner: '), writeln(Winner), show(Board).
-
 % The game is not over, we play the next turn
 play(Player, Board, Human) :- 
 	displayBoard(Board),
 	write('Au tour de : '), writeln(Player),
-    %displayBoard,
     currentMove(Human, Player, Move, Board),
-	writeln(Move),
-%	writeln('BOARD OK'),
-%	isValidMove(Board, Move),
 	indexForMove(Board, Move, Index),
-%    writeln(Index),    
     playMove(Board, NewBoard, Move, Player, Index),
 
-    %colonneN(0, Board, C),
-    %winnerColonne(C, 'X'),
-%	writeln('MOVE OK'),
 	changePlayer(Player,NextPlayer),
-%	writeln('CHANGE OK'),
 	play(NextPlayer, NewBoard, Human).
 
-% returns the move to be played
-currentMove([P1|_], Player, Move, _) :-
+% returns the move to be played and the corresponding column index
+% if move is invalid, it loops
+currentMove([P1|_], Player, Move, Board) :-
 	Player == 'X',
 	P1 == 'H',
 	writeln('Sur quelle colonne voulez-vous jouer ?'),
-	read(Move).
+	read(PossibleMove),
+	(  not(isValidMove(PossibleMove, Board)) -> currentMove([P1|_], Player, Move, Board)
+	;   Move is PossibleMove
+	).
+	
+currentMove([_|P2], Player, Move, Board) :-
+	Player == 'O',
+	P2 == 'H',
+	writeln('Sur quelle colonne voulez-vous jouer ?'),
+	read(PossibleMove),
+	(  not(isValidMove(PossibleMove, Board)) -> currentMove([_|P2], Player, Move, Board)
+	;   Move is PossibleMove
+	).
 
 currentMove([P1|_], Player, Move, Board) :-
 	Player == 'X',
 	P1 == 'C',
 	ia(Board, Move, Player).
 	
-currentMove([_|P2], Player, Move, _) :-
-	Player == 'O',
-	P2 == 'H',
-	writeln('Sur quelle colonne voulez-vous jouer ?'),
-	read(Move).
-	
 currentMove([_|P2], Player, Move, Board) :-
 	Player == 'O',
 	P2 == 'C',
 	ia(Board, Move, Player).
-	
-% stupid random IA not even checking if move is correct
-ia(_, Move, _) :-
-	random_between(0, 6, Move).
+		
+% stupid random IA checking if move is correct
+ia(Board, Move, _) :-
+	random_between(0, 6, PossibleMove),
+	(  not(isValidMove(PossibleMove, Board)) -> ia(Board, Move, _)
+	;   Move is PossibleMove
+	).
 
 % TBD
-%isValidMove() :-
+isValidMove(Move, Board) :-
+	Move>=0, Move<7,indexForMove(Board, Move, Index), Index<6, Index>=0.
 
 % returns the index of first empty space for a move
 indexForMove(Board, Move, Index) :-
-	Move<7, colonneN(Board, Move, Col), indexForColumn(Col, 0, Index).
+	colonneN(Board, Move, Col), indexForColumn(Col, 0, Index).
 
 indexForColumn([T|_], Index, Index) :- T = '-'.
 indexForColumn([_|H], Index, NewIndex) :- Tmp = Index+1, indexForColumn(H, Tmp, NewIndex).
