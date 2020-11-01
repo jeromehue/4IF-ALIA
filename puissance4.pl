@@ -46,11 +46,21 @@ displayBoard :-
     write(' '), display(5, 6), nl.
 
 
-display(_,_,Board) :-
-    nth0(0, Board, C),
-    winnerColonne(C, 'X'),
-    writeln(C),
-    write("Fin du jeu !"),
+checkall(Board) :-
+    nth0(0, Board, C),winnerColonne(C, 'X');
+    nth0(1, Board, C),winnerColonne(C, 'X');
+    nth0(2, Board, C),winnerColonne(C, 'X');
+    nth0(3, Board, C),winnerColonne(C, 'X');
+    nth0(4, Board, C),winnerColonne(C, 'X');
+    nth0(5, Board, C),winnerColonne(C, 'X');
+    nth0(6, Board, C),winnerColonne(C, 'X');
+    winnerLigne2(Board,'X').
+
+
+% If someone is winning, stop.
+win(Board) :-
+    checkall(Board),
+    write('FIN'),nl,
     halt.
 
 display(_, 7, _).
@@ -61,6 +71,7 @@ display(N, I, Board) :-
 % Display the board that is given
 displayBoard(Board) :-
     %write("Plain text"), write(Board), nl,
+    not(win(Board)), 
     nl, writeln(' A  B  C  D  E  F  G'),
     write(' '), display(5, 0, Board), nl,
     write(' '), display(4, 0, Board), nl,
@@ -90,9 +101,9 @@ humanOrAI([P1|P2]):-
 
 % The game is not over, we play the next turn
 play(Player, Board, Human) :- 
+	displayBoard(Board),
 	write('Au tour de : '), writeln(Player),
     %displayBoard,
-	displayBoard(Board),
     currentMove(Human, Player, Move, Board),
 	writeln(Move),
 %	writeln('BOARD OK'),
@@ -194,8 +205,8 @@ premierElement([H|T]) :-
  	premierElement(T).
 
 extract(ColNumber, Matrix, Column) :-
-    maplist(nth0(ColNumber), Matrix, Column),
-    write(Column).
+    maplist(nth0(ColNumber), Matrix, Column).
+    % write(Column).
 	
 % Colonne is winning
 winnerColonne([Y|B],X):-Y==X,B=[X,X,X|_];winnerColonne(B,X).
