@@ -71,14 +71,14 @@ display(N, I, Board) :-
     write(Cell), write('  '), J is I+1, display(N, J, Board).
 
 displayBoard(Board) :-
-    not(win(Board)), 
     nl, writeln(' A  B  C  D  E  F  G'),
     write(' '), display(5, 0, Board), nl,
     write(' '), display(4, 0, Board), nl,
     write(' '), display(3, 0, Board), nl,
     write(' '), display(2, 0, Board), nl,
     write(' '), display(1, 0, Board), nl,
-    write(' '), display(0, 0, Board), nl.
+    write(' '), display(0, 0, Board), nl,
+    not(win(Board)).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Initialisation des joueurs
