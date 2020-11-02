@@ -47,7 +47,7 @@ winnerLigne2(Board, X) :-
 isBoardFull(_, 7).
 isBoardFull(Board, I) :-
     nth0(I, Board, Column),
-    not(member('-', Column)),
+    not(last('-', Column)),
     J is I+1, isBoardFull(Board, J).
 isBoardFull(Board) :- isBoardFull(Board, 0).
 
@@ -240,3 +240,7 @@ premierElement([H|T]) :-
 extract(ColNumber, Matrix, Column) :-
     maplist(nth0(ColNumber), Matrix, Column).
     % write(Column).
+
+% X est le dernier élément de la liste Y
+% Sert notamment au prédicat isBoardFull
+last(X,Y) :- append(_,[X],Y).
