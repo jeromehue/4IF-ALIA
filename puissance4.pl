@@ -106,15 +106,15 @@ humanOrAI([P1|P2]):-
 
 % Jouer aléatoirement
 ia(Board, Move, _) :-
-	random_between(0, 6, PossibleMove),
-	(
-        not(isValidMove(PossibleMove, Board)) -> ia(Board, Move, _)
-	    ; Move is PossibleMove
-	).
+    repeat,
+	random_between(0, 6, Move),
+    isValidMove(Move, Board),
+    !.
 
 % Prioriser les coups offrants
 % le plus de possibilités d’alignement
-ia1(_, _, _).
+ia1(_, _, _) :-
+    
 
 % Prioriser les coups offrants
 % le plus de possibilités d’alignement
