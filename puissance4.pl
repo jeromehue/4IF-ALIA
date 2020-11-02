@@ -30,19 +30,9 @@ winnerColonne([Y|B], X) :-
     B = [X,X,X|_];
     winnerColonne(B, X).
 
-winnerLigne1(Board, X, Num):-
+winnerLigne(Board, X, Num):-
     extract(Num, Board, L1),
-    winnerColonne(L1, X).
-
-winnerLigne2(Board, X) :-
-    winnerLigne1(Board, X, 0);
-    winnerLigne1(Board, X, 1);
-    winnerLigne1(Board, X, 2);
-    winnerLigne1(Board, X, 3);
-    winnerLigne1(Board, X, 4);
-    winnerLigne1(Board, X, 5);
-    winnerLigne1(Board, X, 6);
-    winnerLigne1(Board, X, 7).
+    winnerColonne(L1, X).    
 
 isBoardFull(_, 7).
 isBoardFull(Board, I) :-
@@ -59,7 +49,14 @@ isWinner(Board, Player) :-
     nth0(4, Board, C), winnerColonne(C, Player);
     nth0(5, Board, C), winnerColonne(C, Player);
     nth0(6, Board, C), winnerColonne(C, Player);
-    winnerLigne2(Board, Player).
+    winnerLigne(Board, Player, 0);
+    winnerLigne(Board, Player, 1);
+    winnerLigne(Board, Player, 2);
+    winnerLigne(Board, Player, 3);
+    winnerLigne(Board, Player, 4);
+    winnerLigne(Board, Player, 5);
+    winnerLigne(Board, Player, 6);
+    winnerLigne(Board, Player, 7).
     % Vérifier les diagonales (essais dans test.pl)
 
 win(Board) :-
@@ -127,7 +124,7 @@ ia1([T|Q], Move, _, NumeroColonneMax, CoutMax, NumeroColonneCourant) :-
 	).
 
 %heuristique toute nulle à changer !
-heuristique1(NumColonne, NumIndex, Cout) :-
+heuristique1(_, NumIndex, Cout) :-
     NumIndex < 6,
     Cout is NumIndex;
     Cout is 0.
