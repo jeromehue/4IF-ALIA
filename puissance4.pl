@@ -2,7 +2,7 @@
 %    ALIA - Puissance 4 - Hexanôme 4414     %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Schématisation : 
+% Schématisation :
 %   - emplacement vide
 %   O pion de l’adversaire
 %   X pion du joueur
@@ -44,14 +44,14 @@ winnerLigne2(Board, X) :-
     winnerLigne1(Board, X, 6);
     winnerLigne1(Board, X, 7).
 
-checkDraw(_, 7) :- writeln('Égalité!'), halt.
-checkDraw(Board, Index) :-
-    nth0(Index, Board, Column),
-    not(member('-', Column)),
-    NewIndex is Index+1,
-    checkDraw(Board, NewIndex).
+isBoardFull(_, 7).
+isBoardFull(Board, I) :-
+    nth0(I, Board, Column),
+    not(last('-', Column)),
+    J is I+1, isBoardFull(Board, J).
+isBoardFull(Board) :- isBoardFull(Board, 0).
 
-checkall(Board, Player) :-
+isWinner(Board, Player) :-
     nth0(0, Board, C), winnerColonne(C, Player);
     nth0(1, Board, C), winnerColonne(C, Player);
     nth0(2, Board, C), winnerColonne(C, Player);
@@ -59,16 +59,18 @@ checkall(Board, Player) :-
     nth0(4, Board, C), winnerColonne(C, Player);
     nth0(5, Board, C), winnerColonne(C, Player);
     nth0(6, Board, C), winnerColonne(C, Player);
-    winnerLigne2(Board, Player),
+    winnerLigne2(Board, Player).
     % Vérifier les diagonales (essais dans test.pl)
-    checkDraw(Board, 0).
 
 win(Board) :-
-    checkall(Board, 'X'),
-	write('X a gagné !'), nl, write('FIN'), nl,
+    isWinner(Board, 'X'),
+	write('X a gagné !'), nl, writeln('FIN'),
     halt;
-	checkall(Board, 'O'),
-	write('O a gagné !'), nl, write('FIN'), nl,
+	isWinner(Board, 'O'),
+	write('O a gagné !'), nl, writeln('FIN'),
+    halt;
+    isBoardFull(Board),
+    writeln('Égalité!'), nl, writeln('FIN'),
     halt.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -80,7 +82,7 @@ display(N, I, Board) :-
     write(Cell), write('  '), J is I+1, display(N, J, Board).
 
 displayBoard(Board) :-
-    nl, writeln(' A  B  C  D  E  F  G'),
+    nl, writeln(' 0  1  2  3  4  5  6'),
     write(' '), display(5, 0, Board), nl,
     write(' '), display(4, 0, Board), nl,
     write(' '), display(3, 0, Board), nl,
@@ -254,3 +256,7 @@ premierElement([H|T]) :-
 extract(ColNumber, Matrix, Column) :-
     maplist(nth0(ColNumber), Matrix, Column).
     % write(Column).
+
+% X est le dernier élément de la liste Y
+% Sert notamment au prédicat isBoardFull
+last(X,Y) :- append(_,[X],Y).
