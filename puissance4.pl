@@ -1,13 +1,11 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% ALIA - Puissance 4 - Hexanôme 4414 %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%    ALIA - Puissance 4 - Hexanôme 4414     %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Schématisation : 
-%   - emplacement vide inaccessible
-%   ? emplacement vide accessible
-%   o pion de l’adversaire
-%   x pion du joueur
-%   ! emplacement qui permet de faire un puissance 4
+%   - emplacement vide
+%   O pion de l’adversaire
+%   X pion du joueur
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Création du plateau
@@ -25,26 +23,7 @@ board([
 :- dynamic board/1.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Affichage
-
-display(_, -1).
-display(N, I) :- 
-    board(Board),
-    nth0(I, Board, Col),
-    nth0(N, Col, Cell),
-    write(Cell), write('  '),
-    J is I-1,
-    display(N, J).
-
-displayBoard :- 
-    nl, writeln(' A  B  C  D  E  F  G'),
-    write(' '), display(0, 6), nl,
-    write(' '), display(1, 6), nl,
-    write(' '), display(2, 6), nl,
-    write(' '), display(3, 6), nl,
-    write(' '), display(4, 6), nl,
-    write(' '), display(5, 6), nl.
-
+% Vérifications de fin de jeu
 
 checkall(Board, Player) :-
     nth0(0, Board, C),winnerColonne(C, Player);
@@ -56,7 +35,6 @@ checkall(Board, Player) :-
     nth0(6, Board, C),winnerColonne(C, Player);
     winnerLigne2(Board,Player).
 
-
 % If someone is winning, stop.
 win(Board) :-
     checkall(Board, 'X'),
@@ -66,14 +44,15 @@ win(Board) :-
 	write('O a gagné !'),nl,write('FIN'),nl,
     halt.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Affichage du plateau
+
 display(_, 7, _).
 display(N, I, Board) :- 
     nth0(I, Board, Col),nth0(N, Col, Cell),
     write(Cell), write('  '),J is I+1,display(N, J, Board).
 
-% Display the board that is given
 displayBoard(Board) :-
-    %write("Plain text"), write(Board), nl,
     not(win(Board)), 
     nl, writeln(' A  B  C  D  E  F  G'),
     write(' '), display(5, 0, Board), nl,
@@ -83,20 +62,18 @@ displayBoard(Board) :-
     write(' '), display(1, 0, Board), nl,
     write(' '), display(0, 0, Board), nl.
 
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Initialisation des joueurs
 
 humanOrAI([P1|P2]):- 
-	writeln('Taper H si le joueur 1 est humain, C sinon :'),
+	writeln('Player 1, (H)uman or (C)omputer :'),
 	get_char(P1),
 	get_code(_),
-	writeln('Taper H si le joueur 2 est humain, C sinon :'),
+	writeln('Player 2, (H)uman or (C)omputer :'),
 	get_char(P2).
 	
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Jeu (à améliorer)
+% Déroulement du jeu
 
 % The game is not over, we play the next turn
 play(Player, Board, Human) :- 
@@ -159,16 +136,16 @@ indexForColumn([_|H], Index, NewIndex) :- Tmp = Index+1, indexForColumn(H, Tmp, 
 	
 playMove(Board, NewBoard, Move, Player, Index) :-
 	Index<7, colonneN(Board, Move, Col), applyMoveColumn(Col, NewCol, Index, Player), applyMoveBoard(Board, NewBoard, Col, NewCol, Move).
-	%;Index<7,NewIndex is Index+1, playMove(Board, NewBoard, Move, Player, NewIndex).
+	% ;Index<7,NewIndex is Index+1, playMove(Board, NewBoard, Move, Player, NewIndex).
 
 applyMoveColumn(Col, NewCol, Index, Player) :-
 	take(Index, Col, T), append(T, ['-'|H], Col), append(T, [Player|H], NewCol).
-	%take(Index, Col, T), length(T, Index), H is ['-'|Q], H2 is [Player|Q].
+	% take(Index, Col, T), length(T, Index), H is ['-'|Q], H2 is [Player|Q].
 	
 applyMoveBoard(Board, NewBoard, Col, NewCol, Move) :-
 	take(Move, Board, T), append(T, [Col|H], Board), append(T, [NewCol|H], NewBoard).
-%   write(T), nl, write(NewBoard), nl.
-	%length(T, Move), H is [Col|Q], H2 is [NewCol|Q].
+    % write(T), nl, write(NewBoard), nl.
+	% length(T, Move), H is [Col|Q], H2 is [NewCol|Q].
 
 changePlayer('X', 'O').
 changePlayer('O', 'X').
