@@ -25,23 +25,41 @@ board([
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Vérifications de fin de jeu
 
-checkall(Board, Player) :-
-    nth0(0, Board, C),winnerColonne(C, Player);
-    nth0(1, Board, C),winnerColonne(C, Player);
-    nth0(2, Board, C),winnerColonne(C, Player);
-    nth0(3, Board, C),winnerColonne(C, Player);
-    nth0(4, Board, C),winnerColonne(C, Player);
-    nth0(5, Board, C),winnerColonne(C, Player);
-    nth0(6, Board, C),winnerColonne(C, Player);
-    winnerLigne2(Board,Player).
+winnerColonne([Y|B], X) :-
+    Y == X,
+    B = [X,X,X|_];
+    winnerColonne(B, X).
 
-% If someone is winning, stop.
+winnerLigne1(Board, X, Num):-
+    extract(Num, Board, L1),
+    winnerColonne(L1, X).
+
+winnerLigne2(Board, X) :-
+    winnerLigne1(Board, X, 0);
+    winnerLigne1(Board, X, 1);
+    winnerLigne1(Board, X, 2);
+    winnerLigne1(Board, X, 3);
+    winnerLigne1(Board, X, 4);
+    winnerLigne1(Board, X, 5);
+    winnerLigne1(Board, X, 6);
+    winnerLigne1(Board, X, 7).
+
+checkall(Board, Player) :-
+    nth0(0, Board, C), winnerColonne(C, Player);
+    nth0(1, Board, C), winnerColonne(C, Player);
+    nth0(2, Board, C), winnerColonne(C, Player);
+    nth0(3, Board, C), winnerColonne(C, Player);
+    nth0(4, Board, C), winnerColonne(C, Player);
+    nth0(5, Board, C), winnerColonne(C, Player);
+    nth0(6, Board, C), winnerColonne(C, Player);
+    winnerLigne2(Board, Player).
+
 win(Board) :-
     checkall(Board, 'X'),
-	write('X a gagné !'),nl,write('FIN'),nl,
+	write('X a gagné !'), nl, write('FIN'), nl,
     halt;
 	checkall(Board, 'O'),
-	write('O a gagné !'),nl,write('FIN'),nl,
+	write('O a gagné !'), nl, write('FIN'), nl,
     halt.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -49,8 +67,8 @@ win(Board) :-
 
 display(_, 7, _).
 display(N, I, Board) :- 
-    nth0(I, Board, Col),nth0(N, Col, Cell),
-    write(Cell), write('  '),J is I+1,display(N, J, Board).
+    nth0(I, Board, Col), nth0(N, Col, Cell),
+    write(Cell), write('  '), J is I+1, display(N, J, Board).
 
 displayBoard(Board) :-
     not(win(Board)), 
@@ -82,8 +100,7 @@ play(Player, Board, Human) :-
     currentMove(Human, Player, Move, Board),
 	indexForMove(Board, Move, Index),
     playMove(Board, NewBoard, Move, Player, Index),
-
-	changePlayer(Player,NextPlayer),
+	changePlayer(Player, NextPlayer),
 	play(NextPlayer, NewBoard, Human).
 
 % returns the move to be played and the corresponding column index
@@ -102,8 +119,8 @@ currentMove([_|P2], Player, Move, Board) :-
 	P2 == 'H',
 	writeln('Sur quelle colonne voulez-vous jouer ?'),
 	read(PossibleMove),
-	(  not(isValidMove(PossibleMove, Board)) -> currentMove([_|P2], Player, Move, Board)
-	;   Move is PossibleMove
+	( not(isValidMove(PossibleMove, Board)) -> currentMove([_|P2], Player, Move, Board)
+	; Move is PossibleMove
 	).
 
 currentMove([P1|_], Player, Move, Board) :-
@@ -119,31 +136,45 @@ currentMove([_|P2], Player, Move, Board) :-
 % stupid random IA checking if move is correct
 ia(Board, Move, _) :-
 	random_between(0, 6, PossibleMove),
-	(  not(isValidMove(PossibleMove, Board)) -> ia(Board, Move, _)
-	;   Move is PossibleMove
+	( not(isValidMove(PossibleMove, Board)) -> ia(Board, Move, _)
+	; Move is PossibleMove
 	).
 
 % TBD
 isValidMove(Move, Board) :-
-	Move>=0, Move<7,indexForMove(Board, Move, Index), Index<6, Index>=0.
+	Move >= 0,
+    Move < 7,
+    indexForMove(Board, Move, Index),
+    Index < 6,
+    Index >= 0.
 
 % returns the index of first empty space for a move
 indexForMove(Board, Move, Index) :-
-	colonneN(Board, Move, Col), indexForColumn(Col, 0, Index).
+	colonneN(Board, Move, Col),
+    indexForColumn(Col, 0, Index).
 
 indexForColumn([T|_], Index, Index) :- T = '-'.
-indexForColumn([_|H], Index, NewIndex) :- Tmp = Index+1, indexForColumn(H, Tmp, NewIndex).
+indexForColumn([_|H], Index, NewIndex) :-
+    Tmp = Index+1,
+    indexForColumn(H, Tmp, NewIndex).
 	
 playMove(Board, NewBoard, Move, Player, Index) :-
-	Index<7, colonneN(Board, Move, Col), applyMoveColumn(Col, NewCol, Index, Player), applyMoveBoard(Board, NewBoard, Col, NewCol, Move).
-	% ;Index<7,NewIndex is Index+1, playMove(Board, NewBoard, Move, Player, NewIndex).
+	Index < 7,
+    colonneN(Board, Move, Col),
+    applyMoveColumn(Col, NewCol, Index, Player),
+    applyMoveBoard(Board, NewBoard, Col, NewCol, Move).
+	% ;Index<7, NewIndex is Index+1, playMove(Board, NewBoard, Move, Player, NewIndex).
 
 applyMoveColumn(Col, NewCol, Index, Player) :-
-	take(Index, Col, T), append(T, ['-'|H], Col), append(T, [Player|H], NewCol).
+	take(Index, Col, T),
+    append(T, ['-'|H], Col),
+    append(T, [Player|H], NewCol).
 	% take(Index, Col, T), length(T, Index), H is ['-'|Q], H2 is [Player|Q].
 	
 applyMoveBoard(Board, NewBoard, Col, NewCol, Move) :-
-	take(Move, Board, T), append(T, [Col|H], Board), append(T, [NewCol|H], NewBoard).
+	take(Move, Board, T),
+    append(T, [Col|H], Board),
+    append(T, [NewCol|H], NewBoard).
     % write(T), nl, write(NewBoard), nl.
 	% length(T, Move), H is [Col|Q], H2 is [NewCol|Q].
 
@@ -171,10 +202,10 @@ take(N, [H|TA], [H|TB]) :-
 	take(N2, TA, TB).
 	
 % colonneN(Board, n, Col) returns n-th column of board in Col
-colonneN([T|_],0,T).
-colonneN([_|Q],C,X) :-
+colonneN([T|_], 0, T).
+colonneN([_|Q], C, X) :-
     C1 is C-1,
-    colonneN(Q,C1,X).
+    colonneN(Q, C1, X).
 
 premierElement([X]) :- write(X).
 premierElement([H|T]) :- 
@@ -185,10 +216,3 @@ premierElement([H|T]) :-
 extract(ColNumber, Matrix, Column) :-
     maplist(nth0(ColNumber), Matrix, Column).
     % write(Column).
-	
-% Colonne is winning
-winnerColonne([Y|B],X):-Y==X,B=[X,X,X|_];winnerColonne(B,X).
-
-% Line is winning
-winnerLigne1(Board,X,Num):-extract(Num,Board,L1),winnerColonne(L1,X).
-winnerLigne2(Board,X):-winnerLigne1(Board,X,0);winnerLigne1(Board,X,1);winnerLigne1(Board,X,2);winnerLigne1(Board,X,3);winnerLigne1(Board,X,4);winnerLigne1(Board,X,5);winnerLigne1(Board,X,6);winnerLigne1(Board,X,7).
