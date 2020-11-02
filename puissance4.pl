@@ -111,8 +111,24 @@ ia(Board, Move, _) :-
 
 % Prioriser les coups offrants
 % le plus de possibilités d’alignement
-ia1(_, _, _) :-
-    
+ia1([], Move, _, Move, _, _).
+ia1([T|Q], Move, _, NumeroColonneMax, CoutMax, NumeroColonneCourant) :-
+    not(nth0(5, T, '-')), % on vérifie que la colonne n'est pas pleine
+    NouveauNumeroCourant is NumeroColonneCourant + 1,
+    ia1(Q, Move, _, NumeroColonneMax, CoutMax, NouveauNumeroCourant); % si elle est pleine, on continue
+    indexForColumn(T, 0, Index),
+    heuristique1(NumeroColonneCourant, Index, Cout),
+    NouveauNumeroCourant is NumeroColonneCourant + 1,
+    (  
+        Cout > CoutMax -> writeln("oui"), ia1(Q, Move, _, NumeroColonneCourant, Cout, NouveauNumeroCourant)
+	;   writeln("sinon"), ia1(Q, Move, _, NumeroColonneMax, CoutMax, NouveauNumeroCourant)
+	).
+
+%heuristique toute nulle à changer !
+heuristique1(NumColonne, NumIndex, Cout) :-
+    NumIndex < 6,
+    Cout is NumIndex;
+    Cout is 0.
 
 % Prioriser les coups offrants
 % le plus de possibilités d’alignement
@@ -155,12 +171,12 @@ currentMove([_|P2], Player, Move, Board) :-
 currentMove([P1|_], Player, Move, Board) :-
 	Player == 'X',
 	P1 == 'C',
-	ia(Board, Move, Player).
+	ia1(Board, Move, Player, 0, 0, 0).
 	
 currentMove([_|P2], Player, Move, Board) :-
 	Player == 'O',
 	P2 == 'C',
-	ia(Board, Move, Player).
+    ia1(Board, Move, Player, 0, 0, 0).
 
 % TBD
 isValidMove(Move, Board) :-
@@ -174,10 +190,10 @@ isValidMove(Move, Board) :-
 indexForMove(Board, Move, Index) :-
 	colonneN(Board, Move, Col),
     indexForColumn(Col, 0, Index).
-
+    
 indexForColumn([T|_], Index, Index) :- T = '-'.
 indexForColumn([_|H], Index, NewIndex) :-
-    Tmp = Index+1,
+    Tmp is Index+1,
     indexForColumn(H, Tmp, NewIndex).
 	
 playMove(Board, NewBoard, Move, Player, Index) :-
