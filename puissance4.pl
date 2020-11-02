@@ -25,6 +25,8 @@ board([
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Vérifications de fin de jeu
 
+[test.pl]. % Importation des prédicats de test.pl
+
 winnerColonne([Y|B], X) :-
     Y == X,
     B = [X,X,X|_];
@@ -53,6 +55,7 @@ checkall(Board, Player) :-
     nth0(5, Board, C), winnerColonne(C, Player);
     nth0(6, Board, C), winnerColonne(C, Player);
     winnerLigne2(Board, Player).
+    % Vérifier les diagonales (essais dans test.pl)
 
 win(Board) :-
     checkall(Board, 'X'),
@@ -89,7 +92,27 @@ humanOrAI([P1|P2]):-
 	get_code(_),
 	writeln('Player 2, (H)uman or (C)omputer :'),
 	get_char(P2).
-	
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% IA
+
+% Jouer aléatoirement
+ia(Board, Move, _) :-
+	random_between(0, 6, PossibleMove),
+	(
+        not(isValidMove(PossibleMove, Board)) -> ia(Board, Move, _)
+	    ; Move is PossibleMove
+	).
+
+% Prioriser les coups offrants
+% le plus de possibilités d’alignement
+ia1(_, _, _).
+
+% Prioriser les coups offrants
+% le plus de possibilités d’alignement
+% et réduisants ceux de l’adversaire
+ia2(_, _, _).
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Déroulement du jeu
 
@@ -132,13 +155,6 @@ currentMove([_|P2], Player, Move, Board) :-
 	Player == 'O',
 	P2 == 'C',
 	ia(Board, Move, Player).
-		
-% stupid random IA checking if move is correct
-ia(Board, Move, _) :-
-	random_between(0, 6, PossibleMove),
-	( not(isValidMove(PossibleMove, Board)) -> ia(Board, Move, _)
-	; Move is PossibleMove
-	).
 
 % TBD
 isValidMove(Move, Board) :-
@@ -185,9 +201,9 @@ changePlayer('O', 'X').
 % Initialisation du jeu
 
 init :-
-    board(Board),               % Récupération du plateau de jeu
-    humanOrAI(Player),          % Initialisation des joueurs
-    play('X', Board, Player).   % Début du jeu
+    board(Board),             % Récupération du plateau de jeu
+    humanOrAI(Player),        % Initialisation des joueurs
+    play('X', Board, Player). % Début du jeu
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Prédicats utiles
