@@ -25,8 +25,6 @@ board([
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Vérifications de fin de jeu
 
-[test.pl]. % Importation des prédicats de test.pl
-
 winnerColonne([Y|B], X) :-
     Y == X,
     B = [X,X,X|_];
