@@ -261,7 +261,7 @@ diag_final(Board) :-
     diagonal_unit_b(Board, 1, 5, []),
     diagonal_unit_b(Board, 1, 6, []),
     diagonal_unit_b(Board, 1, 7, []),
-    write("Les diagonales dans l'autre sens maintenant \n"),
+    write('Les diagonales dans lautre sens maintenant \n'),
     diagonal_unit_dc(Board, 6,1,[]),
     diagonal_unit_dc(Board, 5,1,[]),
     diagonal_unit_dc(Board, 4,1,[]),
