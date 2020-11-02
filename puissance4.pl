@@ -44,6 +44,13 @@ winnerLigne2(Board, X) :-
     winnerLigne1(Board, X, 6);
     winnerLigne1(Board, X, 7).
 
+checkDraw(_, 7) :- writeln('Égalité!'), halt.
+checkDraw(Board, Index) :-
+    nth0(Index, Board, Column),
+    not(member('-', Column)),
+    NewIndex is Index+1,
+    checkDraw(Board, NewIndex).
+
 checkall(Board, Player) :-
     nth0(0, Board, C), winnerColonne(C, Player);
     nth0(1, Board, C), winnerColonne(C, Player);
@@ -52,8 +59,9 @@ checkall(Board, Player) :-
     nth0(4, Board, C), winnerColonne(C, Player);
     nth0(5, Board, C), winnerColonne(C, Player);
     nth0(6, Board, C), winnerColonne(C, Player);
-    winnerLigne2(Board, Player).
+    winnerLigne2(Board, Player),
     % Vérifier les diagonales (essais dans test.pl)
+    checkDraw(Board, 0).
 
 win(Board) :-
     checkall(Board, 'X'),
