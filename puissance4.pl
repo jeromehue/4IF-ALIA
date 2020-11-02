@@ -104,7 +104,8 @@ ia(Board, Move, _) :-
 
 % Prioriser les coups offrants
 % le plus de possibilités d’alignement
-ia1(_, _, _).
+ia1(Board, Move, _) :-
+    
 
 % Prioriser les coups offrants
 % le plus de possibilités d’alignement
