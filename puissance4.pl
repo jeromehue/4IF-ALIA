@@ -219,14 +219,41 @@ heuristiqueGagne(Board, NumeroColonneCourant, Player, Index, Cout):-
     ;   Cout is 0
     ).
 
+% Compter le nombre de pions alignés dans une colonne par rapport au dernier pion inséré
+compterAvant(_, -1, _, Cout, Cout).
+compterAvant(Col, Index, Player, Cout, CoutFin):-
+    % write("Index : "), writeln(Index),
+    nth0(Index, Col, Val),
+    % write(Index), write(" : "), writeln(Val),
+    ((Player == Val,
+    NewCout is Cout + 1,
+    NewIndex is Index-1,
+    % write("Cout "), writeln(NewCout),
+    compterAvant(Col, NewIndex, Player, NewCout, CoutFin)
+    );
+    (Player \= Val,
+    compterAvant(Col, -1, Player, Cout, CoutFin) 
+    )).
+
+% heuristique permettant donner un cout en fonction du nombre de pions alignés verticalement
+heurCol(Col, Index, Player, Cout):-
+    compterAvant(Col, Index, Player, 0, NbAligne),
+    (
+        (NbAligne == 1, Index > 2;
+    NbAligne == 2, Index > 3;
+    NbAligne == 3, Index > 4) 
+    -> Cout is 0 ;
+    Cout is NbAligne*NbAligne*NbAligne
+    ).
+
 % Prioriser les coups offrant
 % le plus de possibilités d’alignement
 % et réduisant ceux de l’adversaire
 ia2(_, _, _).
 
-% Analyse d'un tableau Line pour en sortir le cout total
+% Analyse d un tableau Line pour en sortir le cout total
 heurLine(Line, _, TotalCost, TotalCost):-
-    length(Line, 3),
+    length(Line, 3).
 heurLine(Line, Player, FinalCost, Cost):-
     take(4, Line, Quadruplet),
     Line=[_|Q],
