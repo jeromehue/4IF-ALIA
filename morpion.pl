@@ -73,4 +73,3 @@ displayBoard :-
 % Start the game!
 init :- length(Board,9), assert(board(Board)), play('x').
 
-
