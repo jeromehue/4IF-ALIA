@@ -341,7 +341,7 @@ heuristiqueVoisins(Board, NumeroColonneCourant, Player, Index, Cout):-
     write("COUTDIAG2 : "),writeln(CoutDiag2),
 
     Cout is (CoutLigne + CoutCol + CoutDiag1 + CoutDiag2),
-    write("COUT : "),writeln(Cout)
+    write("COUT : "),writeln(Cout),
 
  	Cout is (CoutLigne + CoutCol + CoutDiag1 + CoutDiag2).
 
