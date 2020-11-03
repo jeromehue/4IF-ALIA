@@ -499,8 +499,19 @@ changePlayer('O', 'X').
 
 init :-
     board(Board),             % Récupération du plateau de jeu
+    departs(Board, NewBoard),
     humanOrAI(Player),        % Initialisation des joueurs
-    play('X', Board, Player). % Début du jeu
+    play('X', NewBoard, Player). % Début du jeu
+
+departs(Board, NewBoard) :-
+     random(0,6, Coup),
+     indexForMove(Board, Coup, Index),
+     playMove(Board, IBoard, Coup, 'X', Index),
+     random(0,6, C2),
+     indexForMove(IBoard, C2, I2),
+     playMove(IBoard, NewBoard, C2, 'O', I2),
+     displayBoard(NewBoard),
+     sleep(1).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Prédicats utiles
