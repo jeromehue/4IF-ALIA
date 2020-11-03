@@ -25,6 +25,81 @@ board([
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Vérifications de fin de jeu
 
+%Les diagonales
+diagonal_unit(Board, 7, LI, FINAL, R) :- append([], FINAL, R).
+diagonal_unit(Board, EI, LI, FINAL, R) :-
+                nth1(LI, Board,  L),% On récupère la colonne.
+                nth1(EI, L, X),     % On récupère le bon élément. 
+                %write(X),nl,
+                append(FINAL, [X], F), % Ajout à la diagonale
+                incr(EI, NEI),
+                incr(LI, NLI),
+                %write("par : "), write(NEI), write(" , "), write(NLI), nl,
+                diagonal_unit(Board, NEI, NLI, F, R).
+
+            diagonal_unit_b(Board, EI, 8, FINAL, R) :- append([], FINAL, R).
+diagonal_unit_b(Board, EI, LI, FINAL, R) :-
+                nth1(LI, Board,  L),% On récupère la colonne.
+                nth1(EI, L, X),     % On récupère le bon élément. 
+                %write(X),nl,
+                append(FINAL, [X], F), % Ajout à la diagonale
+                %write(F),nl,
+                incr(EI, NEI),
+                incr(LI, NLI),
+                %write("par : "), write(NEI), write(" , "), write(NLI), nl,
+                diagonal_unit_b(Board, NEI, NLI, F, R).
+diagonal_unit_dc(Board, EI, LI, FINAL, R) :-
+                nth1(LI, Board,  L),% On récupère la colonne.
+                nth1(EI, L, X),     % On récupère le bon élément. 
+                %write(X),nl,
+                append(FINAL, [X], F), % Ajout à la diagonale
+                %write(F),nl,
+                decr(EI, NEI),
+                incr(LI, NLI),
+                %write("par : "), write(NEI), write(" , "), write(NLI), nl,
+                diagonal_unit_dc(Board, NEI, NLI, F, R).
+diagonal_unit_dc(Board, 0, LI, FINAL, R) :- append([], FINAL, R).
+diagonal_unit_dc_b(Board, EI, LI, FINAL, R)  :-
+                nth1(LI, Board,  L),% On récupère la colonne.
+                nth1(EI, L, X),     % On récupère le bon élément. 
+                %write(X),nl,
+                append(FINAL, [X], F), % Ajout à la diagonale
+                %write(F),nl,
+                decr(EI, NEI),
+                incr(LI, NLI),
+                %write("par : "), write(NEI), write(" , "), write(NLI), nl,
+                diagonal_unit_dc_b(Board, NEI, NLI, F, R).
+diagonal_unit_dc_b(Board, EI, 8, FINAL, R) :- append([], FINAL, R).
+
+winnerDiagonal(Board, Player) :- 
+    diagonal_unit(Board,        1, 1, [], R), winnerColonne(R, Player); 
+    diagonal_unit(Board,        2, 1, [], R), winnerColonne(R, Player);
+    diagonal_unit(Board,        3, 1, [], R), winnerColonne(R, Player);
+    diagonal_unit(Board,        4, 1, [], R), winnerColonne(R, Player);
+    diagonal_unit(Board,        5, 1, [], R), winnerColonne(R, Player);
+    diagonal_unit(Board,        6, 1, [], R), winnerColonne(R, Player);
+    diagonal_unit(Board,        1, 2, [], R), winnerColonne(R, Player);
+    diagonal_unit_b(Board,      1, 3, [], R), winnerColonne(R, Player);
+    diagonal_unit_b(Board,      1, 4, [], R), winnerColonne(R, Player);
+    diagonal_unit_b(Board,      1, 5, [], R), winnerColonne(R, Player);
+    diagonal_unit_b(Board,      1, 6, [], R), winnerColonne(R, Player);
+    diagonal_unit_b(Board,      1, 7, [], R), winnerColonne(R, Player);
+    diagonal_unit_dc(Board,     6,1,[], R),winnerColonne(R, Player);
+    diagonal_unit_dc(Board,     5,1,[], R),winnerColonne(R, Player);
+    diagonal_unit_dc(Board,     4,1,[], R),winnerColonne(R, Player);
+    diagonal_unit_dc(Board,     3,1,[], R),winnerColonne(R, Player);
+    diagonal_unit_dc(Board,     2,1,[], R),winnerColonne(R, Player);
+    diagonal_unit_dc(Board,     1,1,[], R),winnerColonne(R, Player);
+    diagonal_unit_dc_b(Board,   6,2,[], R),winnerColonne(R, Player);
+    diagonal_unit_dc_b(Board,   6,3,[], R),winnerColonne(R, Player);
+    diagonal_unit_dc_b(Board,   6,4,[], R),winnerColonne(R, Player);
+    diagonal_unit_dc_b(Board,   6,5,[], R),winnerColonne(R, Player);
+    diagonal_unit_dc_b(Board,   6,6,[], R),winnerColonne(R, Player);
+    diagonal_unit_dc_b(Board,   6,7,[], R),winnerColonne(R, Player).
+
+
+
+
 winnerColonne([Y|B], X) :-
     Y == X,
     B = [X,X,X|_];
@@ -44,6 +119,8 @@ winnerLigne2(Board, X) :-
     winnerLigne1(Board, X, 6);
     winnerLigne1(Board, X, 7).
 
+
+
 checkall(Board, Player) :-
     nth0(0, Board, C), winnerColonne(C, Player);
     nth0(1, Board, C), winnerColonne(C, Player);
@@ -52,8 +129,11 @@ checkall(Board, Player) :-
     nth0(4, Board, C), winnerColonne(C, Player);
     nth0(5, Board, C), winnerColonne(C, Player);
     nth0(6, Board, C), winnerColonne(C, Player);
-    winnerLigne2(Board, Player).
+    winnerLigne2(Board, Player);
+    winnerDiagonal(Board, Player).
     % Vérifier les diagonales (essais dans test.pl)
+
+
 
 win(Board) :-
     checkall(Board, 'X'),
@@ -101,6 +181,8 @@ ia(Board, Move, _) :-
         not(isValidMove(PossibleMove, Board)) -> ia(Board, Move, _)
 	    ; Move is PossibleMove
 	).
+% jouer aléatoirement mais plus au centre
+
 
 % Prioriser les coups offrants
 % le plus de possibilités d’alignement
@@ -230,3 +312,11 @@ premierElement([H|T]) :-
 extract(ColNumber, Matrix, Column) :-
     maplist(nth0(ColNumber), Matrix, Column).
     % write(Column).
+
+% Incrementation of a variable
+incr(X,X1) :- X1 is X+1.
+
+% Decrementation of a variable
+decr(X, X1) :- X1 is X-1.
+
+

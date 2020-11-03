@@ -198,17 +198,28 @@ diag_max_7(Board) :-
 % 7 listes, chacune composée de 6 éléments.
 % Lorsque l'on construit une diagonale, la "condition d'arret"
 % est d'être arrivé au dernier éléméent d'une colonne. Soit le 6ème.
-diagonal_unit(Board, EI, LI, FINAL) :-
+
+upto(Low,High,_Step,Low) :- Low =< High.
+upto(Low,High,Step,Var) :-
+    Inc is Low+Step,
+    Inc =< High,
+    upto(Inc, High, Step, Var).
+
+downto(Low,High,_Step,High) :- Low =< High.
+downto(Low,High,Step,Var) :-
+    Dec is High-Step,
+    Dec >= Low,
+    downto(Low, Dec, Step, Var).
+
+
+diagonal_unit(Board, 7, LI, FINAL, R) :- write("AAAAA"), write(FINAL), append([], FINAL, R).
+diagonal_unit(Board, EI, LI, FINAL, R) :-
                 nth1(LI, Board,  L),% On récupère la colonne.
                 nth1(EI, L, X),     % On récupère le bon élément. 
-                %write(X),nl,
                 append(FINAL, [X], F), % Ajout à la diagonale
-                %write(F),nl,
                 incr(EI, NEI),
                 incr(LI, NLI),
-                %write("par : "), write(NEI), write(" , "), write(NLI), nl,
-                diagonal_unit(Board, NEI, NLI, F).
-diagonal_unit(Board, 7, LI, FINAL) :- write("AAAAA"), write(FINAL), nl.
+                diagonal_unit(Board, NEI, NLI, F, R).
 
 diagonal_unit_b(Board, EI, LI, FINAL) :-
                 nth1(LI, Board,  L),% On récupère la colonne.
@@ -281,7 +292,14 @@ diagtestf :-
     show(board(X)),
     diag_final(X).
 
+buildDiag(Board, X) :-
+    forall(upto(0,6,1,V),write(V), nth0()).
 
+getDiag() :-
+    create2(X),
+    write(X),nl,
+    diagonal_unit(X, 1,1,  [],A),write(A).
+    %forall(upto(0,6,1,V),diagonal_unit(X,V,V,A)).
 %%%%%%%%%%%%%%%%%%%%%%%
 % Utilitary functions %
 %%%%%%%%%%%%%%%%%%%%%%%
