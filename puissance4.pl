@@ -213,6 +213,14 @@ humanOrAI([P1|P2]):-
     writeln('Player 2, 1 (Human), 2 (Random IA), 3 (IA1), 4 (IA2)'),
 	read(P2).
 
+humanOrAI([P1|P2], Board, NewBoard):-
+	writeln('Player 1, 1 (Human), 2 (Random IA), 3 (IA1), 4 (IA2)'),
+	read(P1),
+    writeln('Player 2, 1 (Human), 2 (Random IA), 3 (IA1), 4 (IA2)'),
+	read(P2),
+    ( P is P1+P2, P = 7 ->  departs(Board, NewBoard)  ; sleep(1), append([], Board, NewBoard) ).
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % IA
 
@@ -499,8 +507,7 @@ changePlayer('O', 'X').
 
 init :-
     board(Board),             % Récupération du plateau de jeu
-    departs(Board, NewBoard),
-    humanOrAI(Player),        % Initialisation des joueurs
+    humanOrAI(Player, Board, NewBoard),        % Initialisation des joueurs
     play('X', NewBoard, Player). % Début du jeu
 
 departs(Board, NewBoard) :-
