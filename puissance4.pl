@@ -135,14 +135,21 @@ isWinner(Board, Player) :-
 win(Board) :-
     isWinner(Board, 'X'),
 	write('X a gagné !'), nl, writeln('FIN'),
-    halt;
+    replay;
 	isWinner(Board, 'O'),
 	write('O a gagné !'), nl, writeln('FIN'),
-    halt;
+    replay;
     isBoardFull(Board),
     writeln('Égalité!'), nl, writeln('FIN'),
-    halt.
+    replay.
 
+replay :-
+    writeln('Voulez-vous rejouer ? 1 (Oui) 2 (Non)'),
+    read(P1),
+    (
+        P1==1 -> init
+    ;   halt
+    ).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Affichage du plateau
 
@@ -165,11 +172,10 @@ displayBoard(Board) :-
 % Initialisation des joueurs
 
 humanOrAI([P1|P2]):-
-	writeln('Player 1, (H)uman , (R)andom IA, (C) IA1, (D) IA2'),
-	get_char(P1),
-	get_code(_),
-	writeln('Player 2, (H)uman , (R)andom IA, (C) IA1, (D) IA2'),
-	get_char(P2).
+	writeln('Player 1, 1 (Human), 2 (Random IA), 3 (IA1), 4 (IA2)'),
+	read(P1),
+    writeln('Player 2, 1 (Human), 2 (Random IA), 3 (IA1), 4 (IA2)'),
+	read(P2).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % IA
@@ -284,7 +290,7 @@ play(Player, Board, Human) :-
 % if move is invalid, it loops
 currentMove([P1|_], Player, Move, Board) :-
 	Player == 'X',
-	P1 == 'H',
+	P1 == 1,
 	writeln('Sur quelle colonne voulez-vous jouer ?'),
 	read(PossibleMove),
 	(  not(isValidMove(PossibleMove, Board)) -> currentMove([P1|_], Player, Move, Board)
@@ -293,7 +299,7 @@ currentMove([P1|_], Player, Move, Board) :-
 
 currentMove([_|P2], Player, Move, Board) :-
 	Player == 'O',
-	P2 == 'H',
+	P2 == 1,
 	writeln('Sur quelle colonne voulez-vous jouer ?'),
 	read(PossibleMove),
 	( not(isValidMove(PossibleMove, Board)) -> currentMove([_|P2], Player, Move, Board)
@@ -302,32 +308,32 @@ currentMove([_|P2], Player, Move, Board) :-
 
 currentMove([P1|_], Player, Move, Board) :-
 	Player == 'X',
-	P1 == 'C',
+	P1 == 3,
 	ia1(Board, Board, Move, Player, 0, 0, 0).
 
 currentMove([_|P2], Player, Move, Board) :-
 	Player == 'O',
-	P2 == 'C',
+	P2 == 3,
     ia1(Board, Board, Move, Player, 0, 0, 0).
 
 currentMove([P1|_], Player, Move, Board) :-
 	Player == 'X',
-	P1 == 'D',
+	P1 == 4,
 	ia2(Board, Board, Move, Player, 0, 0, 0).
 
 currentMove([_|P2], Player, Move, Board) :-
 	Player == 'O',
-	P2 == 'D',
+	P2 == 4,
     ia2(Board, Board, Move, Player, 0, 0, 0).
 
 currentMove([P1|_], Player, Move, Board) :-
 	Player == 'X',
-	P1 == 'R',
+	P1 == 2,
 	randomIA(Board, Move, Player).
 
 currentMove([_|P2], Player, Move, Board) :-
 	Player == 'O',
-	P2 == 'R',
+	P2 == 2,
     randomIA(Board, Move, Player).
 
 % TBD
