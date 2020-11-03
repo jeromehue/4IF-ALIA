@@ -2,7 +2,7 @@
 %    ALIA - Puissance 4 - Hexanôme 4414     %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Schématisation : 
+% Schématisation :
 %   - emplacement vide
 %   O pion de l’adversaire
 %   X pion du joueur
@@ -105,8 +105,9 @@ winnerColonne([Y|B], X) :-
     B = [X,X,X|_];
     winnerColonne(B, X).
 
-winnerLigne1(Board, X, Num):-
+winnerLigne(Board, X, Num):-
     extract(Num, Board, L1),
+<<<<<<< HEAD
     winnerColonne(L1, X).
 
 winnerLigne2(Board, X) :-
@@ -122,6 +123,17 @@ winnerLigne2(Board, X) :-
 
 
 checkall(Board, Player) :-
+=======
+    winnerColonne(L1, X).    
+
+isBoardFull(_, 7).
+isBoardFull(Board, I) :-
+    nth0(I, Board, Column),
+    not(last('-', Column)),
+    J is I+1, isBoardFull(Board, J).
+isBoardFull(Board) :- isBoardFull(Board, 0).
+
+isWinner(Board, Player) :-
     nth0(0, Board, C), winnerColonne(C, Player);
     nth0(1, Board, C), winnerColonne(C, Player);
     nth0(2, Board, C), winnerColonne(C, Player);
@@ -131,16 +143,18 @@ checkall(Board, Player) :-
     nth0(6, Board, C), winnerColonne(C, Player);
     winnerLigne2(Board, Player);
     winnerDiagonal(Board, Player).
-    % Vérifier les diagonales (essais dans test.pl)
 
 
 
 win(Board) :-
-    checkall(Board, 'X'),
-	write('X a gagné !'), nl, write('FIN'), nl,
+    isWinner(Board, 'X'),
+	write('X a gagné !'), nl, writeln('FIN'),
     halt;
-	checkall(Board, 'O'),
-	write('O a gagné !'), nl, write('FIN'), nl,
+	isWinner(Board, 'O'),
+	write('O a gagné !'), nl, writeln('FIN'),
+    halt;
+    isBoardFull(Board),
+    writeln('Égalité!'), nl, writeln('FIN'),
     halt.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -152,7 +166,7 @@ display(N, I, Board) :-
     write(Cell), write('  '), J is I+1, display(N, J, Board).
 
 displayBoard(Board) :-
-    nl, writeln(' A  B  C  D  E  F  G'),
+    nl, writeln(' 0  1  2  3  4  5  6'),
     write(' '), display(5, 0, Board), nl,
     write(' '), display(4, 0, Board), nl,
     write(' '), display(3, 0, Board), nl,
@@ -176,17 +190,31 @@ humanOrAI([P1|P2]):-
 
 % Jouer aléatoirement
 ia(Board, Move, _) :-
-	random_between(0, 6, PossibleMove),
-	(
-        not(isValidMove(PossibleMove, Board)) -> ia(Board, Move, _)
-	    ; Move is PossibleMove
-	).
-% jouer aléatoirement mais plus au centre
-
+    repeat,
+	random_between(0, 6, Move),
+    isValidMove(Move, Board),
+    !.
 
 % Prioriser les coups offrants
 % le plus de possibilités d’alignement
-ia1(_, _, _).
+ia1([], Move, _, Move, _, _).
+ia1([T|Q], Move, _, NumeroColonneMax, CoutMax, NumeroColonneCourant) :-
+    not(nth0(5, T, '-')), % on vérifie que la colonne n'est pas pleine
+    NouveauNumeroCourant is NumeroColonneCourant + 1,
+    ia1(Q, Move, _, NumeroColonneMax, CoutMax, NouveauNumeroCourant); % si elle est pleine, on continue
+    indexForColumn(T, 0, Index),
+    heuristique1(NumeroColonneCourant, Index, Cout),
+    NouveauNumeroCourant is NumeroColonneCourant + 1,
+    (  
+        Cout > CoutMax -> writeln("oui"), ia1(Q, Move, _, NumeroColonneCourant, Cout, NouveauNumeroCourant)
+	;   writeln("sinon"), ia1(Q, Move, _, NumeroColonneMax, CoutMax, NouveauNumeroCourant)
+	).
+
+%heuristique toute nulle à changer !
+heuristique1(_, NumIndex, Cout) :-
+    NumIndex < 6,
+    Cout is NumIndex;
+    Cout is 0.
 
 % Prioriser les coups offrants
 % le plus de possibilités d’alignement
@@ -229,12 +257,12 @@ currentMove([_|P2], Player, Move, Board) :-
 currentMove([P1|_], Player, Move, Board) :-
 	Player == 'X',
 	P1 == 'C',
-	ia(Board, Move, Player).
+	ia1(Board, Move, Player, 0, 0, 0).
 	
 currentMove([_|P2], Player, Move, Board) :-
 	Player == 'O',
 	P2 == 'C',
-	ia(Board, Move, Player).
+    ia1(Board, Move, Player, 0, 0, 0).
 
 % TBD
 isValidMove(Move, Board) :-
@@ -248,10 +276,10 @@ isValidMove(Move, Board) :-
 indexForMove(Board, Move, Index) :-
 	colonneN(Board, Move, Col),
     indexForColumn(Col, 0, Index).
-
+    
 indexForColumn([T|_], Index, Index) :- T = '-'.
 indexForColumn([_|H], Index, NewIndex) :-
-    Tmp = Index+1,
+    Tmp is Index+1,
     indexForColumn(H, Tmp, NewIndex).
 	
 playMove(Board, NewBoard, Move, Player, Index) :-
@@ -319,4 +347,6 @@ incr(X,X1) :- X1 is X+1.
 % Decrementation of a variable
 decr(X, X1) :- X1 is X-1.
 
-
+% X est le dernier élément de la liste Y
+% Sert notamment au prédicat isBoardFull
+last(X,Y) :- append(_,[X],Y).
