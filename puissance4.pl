@@ -48,7 +48,7 @@ diagonal_unit_b(Board, EI, LI, FINAL, R) :-
     incr(LI, NLI),
     %write("par : "), write(NEI), write(" , "), write(NLI), nl,
     diagonal_unit_b(Board, NEI, NLI, F, R).
-    
+
 diagonal_unit_dc(Board, EI, LI, FINAL, R) :-
     nth1(LI, Board,  L),% On récupère la colonne.
     nth1(EI, L, X),     % On récupère le bon élément.
@@ -59,7 +59,7 @@ diagonal_unit_dc(Board, EI, LI, FINAL, R) :-
     incr(LI, NLI),
     %write("par : "), write(NEI), write(" , "), write(NLI), nl,
     diagonal_unit_dc(Board, NEI, NLI, F, R).
-    
+
 diagonal_unit_dc(_, 0, _, FINAL, R) :- append([], FINAL, R).
 diagonal_unit_dc_b(Board, EI, LI, FINAL, R)  :-
     nth1(LI, Board,  L),% On récupère la colonne.
@@ -81,7 +81,7 @@ diagonal_hd(Board, EI, LI, FINAL, R) :-
     append(FINAL, [X], F), % Ajout à la diagonale
     incr(EI, NEI),incr(LI, NLI),
     diagonal_hd(Board, NEI, NLI, F, R).
-    
+
 diagonal_bg(_, _, -1, FINAL, R) :- append([], FINAL, R).
 diagonal_bg(_, -1, _, FINAL, R) :- append([], FINAL, R).
 diagonal_bg(Board, EI, LI, FINAL, R) :-
@@ -89,7 +89,7 @@ diagonal_bg(Board, EI, LI, FINAL, R) :-
     append(FINAL, [X], F), % Ajout à la diagonale
     decr(EI, NEI),decr(LI, NLI),
     diagonal_bg(Board, NEI, NLI, F, R).
-    
+
 diagonal_hg(_, _, -1, FINAL, R) :- append([], FINAL, R).
 diagonal_hg(_, 6, _, FINAL, R) :- append([], FINAL, R).
 diagonal_hg(Board, EI, LI, FINAL, R) :-
@@ -97,7 +97,7 @@ diagonal_hg(Board, EI, LI, FINAL, R) :-
     append(FINAL, [X], F), % Ajout à la diagonale
     incr(EI, NEI),decr(LI, NLI),
     diagonal_hg(Board, NEI, NLI, F, R).
-    
+
 diagonal_bd(_, _, 7, FINAL, R) :- append([], FINAL, R).
 diagonal_bd(_, -1, _, FINAL, R) :- append([], FINAL, R).
 diagonal_bd(Board, EI, LI, FINAL, R) :-
@@ -274,7 +274,7 @@ compterAvant(Col, Index, Player, Cout, CoutFin):-
     compterAvant(Col, NewIndex, Player, NewCout, CoutFin)
     );
     (Player \= Val,
-    compterAvant(Col, -1, Player, Cout, CoutFin) 
+    compterAvant(Col, -1, Player, Cout, CoutFin)
     )).
 
 % heuristique permettant donner un cout en fonction du nombre de pions alignés verticalement
@@ -283,7 +283,7 @@ heurCol(Col, Index, Player, Cout):-
     (
         (NbAligne == 1, Index > 2;
     NbAligne == 2, Index > 3;
-    NbAligne == 3, Index > 4) 
+    NbAligne == 3, Index > 4)
     -> Cout is 0 ;
     Cout is NbAligne*NbAligne*NbAligne
     ).
@@ -302,18 +302,42 @@ ia2([T|Q], Board, Move, Player, NumeroColonneMax, CoutMax, NumeroColonneCourant)
     writeln("\n FINISHING FOR IA2 \n"),
     heuristic1(NumeroColonneCourant, Index, Cout2),
     heuristiqueGagne(Board, NumeroColonneCourant, Player, Index, Cout3),
-    Cout is (Cout1 + Cout2 + Cout3),
+    heuristiqueAdverseGagne(Board, NumeroColonneCourant, Player, Index, Cout4),
+    (
+    (Cout4 == 0 ,Cout is 0)
+    ; Cout4\=0, Cout is (Cout1 + Cout2 + Cout3 )
+    ),
     NouveauNumeroCourant is NumeroColonneCourant + 1,
     (
         Cout > CoutMax -> ia2(Q, Board, Move, Player, NumeroColonneCourant, Cout, NouveauNumeroCourant)
 	;   ia2(Q, Board, Move, Player, NumeroColonneMax, CoutMax, NouveauNumeroCourant)
 	).
+% testHeuristiqueAdverse(Cout).
+testHeuristiqueAdverse(Cout):-
+  Array = [
+      [ 'X',  'X',  '-',  '-',  '-', '-' ],
+      [ 'X',  'X',  '-',  '-',  '-', '-' ],
+      [ '-',  '-',  '-',  '-',  '-', '-' ],
+      [ 'O',  'O',  '-',  '-',  '-', '-' ],
+      [ '-',  '-',  '-',  '-',  '-', '-' ],
+      [ '-',  '-',  '-',  '-',  '-', '-' ],
+      [ '-',  '-',  '-',  '-',  '-', '-' ]
+  ],
+  heuristiqueAdverseGagne(Array, 2, 'O', 0, Cout).
+
+% l adversaire gagne t il si je joue sur cette case
+heuristiqueAdverseGagne(Board, NumeroColonneCourant, Player, Index, Cout):-
+    playMove(Board, NewBoard, NumeroColonneCourant, Player, Index),
+    changePlayer(Player, NextPlayer),
+    Index1 is Index + 1,
+    playMove(NewBoard, NewBoard2, NumeroColonneCourant, NextPlayer, Index1),
+    isWinner(NewBoard2, NextPlayer) -> Cout is 0 ; Cout is 1.
 
 % heuristique de l IA2
 heuristiqueVoisins(Board, NumeroColonneCourant, Player, Index, Cout):-
     write("############### COLONNE TESTEE : "), write(NumeroColonneCourant),
     writeln(" ###############"),
-    
+
     playMove(Board, NewBoard, NumeroColonneCourant, Player, Index),
 
  	% Récupère la colonne
@@ -325,19 +349,19 @@ heuristiqueVoisins(Board, NumeroColonneCourant, Player, Index, Cout):-
  	extract(Index, NewBoard, Line),
  	write("Ligne        : "), writeln(Line),
     heurLine(Line, Player, CoutLigne, 0),
-    
+
     % Récupère la diagonale hd,
     diagonal_hd(NewBoard, Index, NumeroColonneCourant, [], R1),
     decr(Index, I2), decr(NumeroColonneCourant, N2),
     diagonal_bg(NewBoard, I2, N2, [], R2),
-    append(R1,R2,DHD), 
+    append(R1,R2,DHD),
     write("Diagonale 1  : "),writeln(DHD),
     heurLine(DHD, Player, CoutDiag1, 0),
 
     diagonal_hg(NewBoard, Index, NumeroColonneCourant, [], R3),
     decr(Index, I4), incr(NumeroColonneCourant, N4),
     diagonal_bd(NewBoard, I4, N4, [], R4),
-    append(R3,R4,DHGBD), 
+    append(R3,R4,DHGBD),
     write("Diagonale 2  : "), writeln(DHGBD),
     heurLine(DHGBD, Player, CoutDiag2, 0),
 
@@ -363,7 +387,7 @@ heurLine(Line, Player, FinalCost, Cost):-
         changePlayer(Player, NextPlayer), member(NextPlayer, Quadruplet) -> heurLine(Q, Player, FinalCost, Cost)
 	;   count(Player, Quadruplet, Occur), CostQuadruplet is Cost+Occur*Occur*Occur, heurLine(Q, Player, FinalCost, CostQuadruplet)
 	).
-    
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Déroulement du jeu
 
@@ -511,7 +535,7 @@ last(X,Y) :- append(_,[X],Y).
 % renvoie le nombre d'occurrences d'un élément dans une liste
 count(_, [], 0).
 count(Elem, [Elem|Q], OccurFinal) :-
-    !, 
+    !,
     count(Elem, Q, Occur),
     OccurFinal is Occur + 1.
 count(Elem, [_|Q], Occur) :-
