@@ -175,7 +175,7 @@ humanOrAI([P1|P2]):-
 % IA
 
 % Jouer aléatoirement
-ia(Board, Move, _) :-
+randomIA(Board, Move, _) :-
     repeat,
 	random_between(0, 6, Move),
     isValidMove(Move, Board),
@@ -192,11 +192,10 @@ ia1([T|Q], Board, Move, Player, NumeroColonneMax, CoutMax, NumeroColonneCourant)
     heuristic1(NumeroColonneCourant, Index, Cout1),
     heuristiqueGagne(Board, NumeroColonneCourant, Player, Index, Cout2),
     Cout is Cout1 + Cout2,
-    writeln(Cout),
     NouveauNumeroCourant is NumeroColonneCourant + 1,
     (
-        Cout > CoutMax -> writeln("oui"), ia1(Q, Board, Move, Player, NumeroColonneCourant, Cout, NouveauNumeroCourant)
-	;   writeln("sinon"), ia1(Q, Board, Move, Player, NumeroColonneMax, CoutMax, NouveauNumeroCourant)
+        Cout > CoutMax -> ia1(Q, Board, Move, Player, NumeroColonneCourant, Cout, NouveauNumeroCourant)
+	;   ia1(Q, Board, Move, Player, NumeroColonneMax, CoutMax, NouveauNumeroCourant)
 	).
 
 % heuristique offrant le plus de possibilités d alignement
@@ -220,11 +219,22 @@ heuristiqueGagne(Board, NumeroColonneCourant, Player, Index, Cout):-
     ;   Cout is 0
     ).
 
-% Prioriser les coups offrants
+% Prioriser les coups offrant
 % le plus de possibilités d’alignement
-% et réduisants ceux de l’adversaire
+% et réduisant ceux de l’adversaire
 ia2(_, _, _).
 
+% Analyse d'un tableau Line pour en sortir le cout total
+heurLine(Line, _, TotalCost, TotalCost):-
+    length(Line, 3),
+heurLine(Line, Player, FinalCost, Cost):-
+    take(4, Line, Quadruplet),
+    Line=[_|Q],
+    (
+        changePlayer(Player, NextPlayer), member(NextPlayer, Quadruplet) -> heurLine(Q, Player, FinalCost, Cost)
+	;   count(Player, Quadruplet, Occur), CostQuadruplet is Cost+Occur*Occur*Occur, writeln(CostQuadruplet), heurLine(Q, Player, FinalCost, CostQuadruplet)
+	).
+    
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Déroulement du jeu
 
@@ -281,12 +291,12 @@ currentMove([_|P2], Player, Move, Board) :-
 currentMove([P1|_], Player, Move, Board) :-
 	Player == 'X',
 	P1 == 'R',
-	ia(Board, Move, Player).
+	randomIA(Board, Move, Player).
 
 currentMove([_|P2], Player, Move, Board) :-
 	Player == 'O',
 	P2 == 'R',
-  ia(Board, Move, Player).
+    randomIA(Board, Move, Player).
 
 % TBD
 isValidMove(Move, Board) :-
