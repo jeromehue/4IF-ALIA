@@ -256,8 +256,8 @@ heuristic1(NumCol, NumLine, Cost):-
 heuristiqueGagne(Board, NumeroColonneCourant, Player, Index, Cout):-
     playMove(Board, NewBoard, NumeroColonneCourant, Player, Index),
     (
-        isWinner(NewBoard, Player) -> Cout is 1000
-    ;   changePlayer(Player, NextPlayer), playMove(Board, NewBoard2, NumeroColonneCourant, NextPlayer, Index), isWinner(NewBoard2, NextPlayer), Cout is 900
+        isWinner(NewBoard, Player) -> Cout is 10000
+    ;   changePlayer(Player, NextPlayer), playMove(Board, NewBoard2, NumeroColonneCourant, NextPlayer, Index), isWinner(NewBoard2, NextPlayer), Cout is 9000
     ;   Cout is 0
     ).
 
@@ -282,10 +282,10 @@ heurCol(Col, Index, Player, Cout):-
     compterAvant(Col, Index, Player, 0, NbAligne),
     (
         (NbAligne == 1, Index > 2;
-    NbAligne == 2, Index > 3;
-    NbAligne == 3, Index > 4)
-    -> Cout is 0 ;
-    Cout is NbAligne*NbAligne*NbAligne
+        NbAligne == 2, Index > 3;
+        NbAligne == 3, Index > 4) 
+        -> Cout is 0 ;
+        Cout is NbAligne*NbAligne*NbAligne
     ).
 
 % Prioriser les coups offrant
@@ -297,6 +297,7 @@ ia2([T|Q], Board, Move, Player, NumeroColonneMax, CoutMax, NumeroColonneCourant)
     not(nth0(5, T, '-')), % on vérifie que la colonne n est pas pleine
     NouveauNumeroCourant is NumeroColonneCourant + 1,
     ia2(Q, Board, Move, Player, NumeroColonneMax, CoutMax, NouveauNumeroCourant); % si elle est pleine, on continue
+    writeln("IA2"),
     indexForColumn(T, 0, Index),
     heuristiqueVoisins(Board, NumeroColonneCourant, Player, Index, Cout1),
     changePlayer(Player, AutrePlayer),
@@ -305,10 +306,8 @@ ia2([T|Q], Board, Move, Player, NumeroColonneMax, CoutMax, NumeroColonneCourant)
     heuristic1(NumeroColonneCourant, Index, Cout2),
     heuristiqueGagne(Board, NumeroColonneCourant, Player, Index, Cout3),
     heuristiqueAdverseGagne(Board, NumeroColonneCourant, Player, Index, Cout4),
-    (
-    (Cout4 == 0 ,Cout is 0)
-    ; Cout4\=0, Cout is (Cout1 + Cout2 + Cout3 + Cout5)
-    ),
+    
+    Cout is (Cout1 + Cout2 + Cout3 + Cout4 + Cout5),
     NouveauNumeroCourant is NumeroColonneCourant + 1,
     (
         Cout > CoutMax -> ia2(Q, Board, Move, Player, NumeroColonneCourant, Cout, NouveauNumeroCourant)
@@ -333,7 +332,7 @@ heuristiqueAdverseGagne(Board, NumeroColonneCourant, Player, Index, Cout):-
     changePlayer(Player, NextPlayer),
     Index1 is Index + 1,
     playMove(NewBoard, NewBoard2, NumeroColonneCourant, NextPlayer, Index1),
-    isWinner(NewBoard2, NextPlayer) -> Cout is 0 ; Cout is 1.
+    isWinner(NewBoard2, NextPlayer) -> Cout is -8000 ; Cout is 0.
 
 % heuristique de l IA2
 heuristiqueVoisins(Board, NumeroColonneCourant, Player, Index, Cout):-
@@ -385,6 +384,7 @@ heurLine(Line, _, TotalCost, TotalCost):-
 heurLine(Line, Player, FinalCost, Cost):-
     take(4, Line, Quadruplet),
     Line=[_|Q],
+    changePlayer(Player, NextPlayer),
     (
         changePlayer(Player, NextPlayer), member(NextPlayer, Quadruplet) -> heurLine(Q, Player, FinalCost, Cost)
 	;   count(Player, Quadruplet, Occur), CostQuadruplet is Cost+Occur*Occur*Occur, heurLine(Q, Player, FinalCost, CostQuadruplet)
@@ -513,12 +513,6 @@ take(N, [H|TA], [H|TB]) :-
 	N > 0,
 	N2 is N - 1,
 	take(N2, TA, TB).
-
-premierElement([X]) :- write(X).
-premierElement([H|T]) :-
-	nl,
-	write(H),
- 	premierElement(T).
 
 extract(ColNumber, Matrix, Column) :-
     maplist(nth0(ColNumber), Matrix, Column).
