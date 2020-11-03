@@ -98,8 +98,6 @@ winnerDiagonal(Board, Player) :-
     diagonal_unit_dc_b(Board,   6,7,[], R),winnerColonne(R, Player).
 
 
-
-
 winnerColonne([Y|B], X) :-
     Y == X,
     B = [X,X,X|_];
@@ -108,19 +106,6 @@ winnerColonne([Y|B], X) :-
 winnerLigne(Board, X, Num):-
     extract(Num, Board, L1),
     winnerColonne(L1, X).
-
-winnerLigne2(Board, X) :-
-    winnerLigne1(Board, X, 0);
-    winnerLigne1(Board, X, 1);
-    winnerLigne1(Board, X, 2);
-    winnerLigne1(Board, X, 3);
-    winnerLigne1(Board, X, 4);
-    winnerLigne1(Board, X, 5);
-    winnerLigne1(Board, X, 6);
-    winnerLigne1(Board, X, 7).
-
-
-
 
 isBoardFull(_, 7).
 isBoardFull(Board, I) :-
@@ -258,12 +243,12 @@ currentMove([_|P2], Player, Move, Board) :-
 currentMove([P1|_], Player, Move, Board) :-
 	Player == 'X',
 	P1 == 'C',
-	ia1(Board, Move, Player, 0, 0, 0).
+	ia(Board, Move, Player). %, 0, 0, 0
 	
 currentMove([_|P2], Player, Move, Board) :-
 	Player == 'O',
 	P2 == 'C',
-    ia1(Board, Move, Player, 0, 0, 0).
+    ia(Board, Move, Player).
 
 % TBD
 isValidMove(Move, Board) :-
