@@ -165,10 +165,10 @@ displayBoard(Board) :-
 % Initialisation des joueurs
 
 humanOrAI([P1|P2]):-
-	writeln('Player 1, (H)uman or (C)omputer :'),
+	writeln('Player 1, (H)uman , (R)andom IA, (C) IA1, (D) IA2'),
 	get_char(P1),
 	get_code(_),
-	writeln('Player 2, (H)uman or (C)omputer :'),
+	writeln('Player 2, (H)uman , (R)andom IA, (C) IA1, (D) IA2'),
 	get_char(P2).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -219,7 +219,7 @@ heuristiqueGagne(Board, NumeroColonneCourant, Player, Index, Cout):-
     ;   changePlayer(Player, NextPlayer), playMove(Board, NewBoard2, NumeroColonneCourant, NextPlayer, Index), isWinner(NewBoard2, NextPlayer), Cout is 900
     ;   Cout is 0
     ).
-        
+
 % Prioriser les coups offrants
 % le plus de possibilités d’alignement
 % et réduisants ceux de l’adversaire
@@ -261,12 +261,32 @@ currentMove([_|P2], Player, Move, Board) :-
 currentMove([P1|_], Player, Move, Board) :-
 	Player == 'X',
 	P1 == 'C',
-	ia1(Board, Board, Move, Player, 0, 0, 0). %ia(Board, Move, Player).
-	
+	ia1(Board, Board, Move, Player, 0, 0, 0).
+
 currentMove([_|P2], Player, Move, Board) :-
 	Player == 'O',
 	P2 == 'C',
-    ia1(Board, Board, Move, Player, 0, 0, 0). %ia(Board, Move, Player).
+    ia1(Board, Board, Move, Player, 0, 0, 0).
+
+%currentMove([P1|_], Player, Move, Board) :-
+%	Player == 'X',
+%	P1 == 'D',
+%	ia2().
+
+%currentMove([_|P2], Player, Move, Board) :-
+%	Player == 'O',
+%	P2 == 'D',
+%    ia2().
+
+currentMove([P1|_], Player, Move, Board) :-
+	Player == 'X',
+	P1 == 'R',
+	ia(Board, Move, Player).
+
+currentMove([_|P2], Player, Move, Board) :-
+	Player == 'O',
+	P2 == 'R',
+  ia(Board, Move, Player).
 
 % TBD
 isValidMove(Move, Board) :-
