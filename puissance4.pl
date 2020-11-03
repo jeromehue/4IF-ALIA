@@ -248,7 +248,7 @@ heuristic1(NumCol, NumLine, Cost):-
                         [ 7 ,10 ,13 ,13 ,10 , 7 ],
                         [ 5 , 8 ,11 ,11 , 8 , 5 ],
                         [ 4 , 6 , 8 , 8 , 6 , 4 ],
-                        [ 3 , 4 , 5 , 5 , 4 , 3 ] ],
+                        [ 3 , 4 , 50 , 50 , 50 , 3 ] ],
     nth0(NumCol, HeuristicArray, Col),
     nth0(NumLine, Col, Cost).
 
@@ -300,13 +300,15 @@ ia2([T|Q], Board, Move, Player, NumeroColonneMax, CoutMax, NumeroColonneCourant)
     writeln("IA2"),
     indexForColumn(T, 0, Index),
     heuristiqueVoisins(Board, NumeroColonneCourant, Player, Index, Cout1),
+    changePlayer(Player, AutrePlayer),
+    heuristiqueVoisins(Board, NumeroColonneCourant, AutrePlayer, Index, Cout5),
     writeln("\n FINISHING FOR IA2 \n"),
     heuristic1(NumeroColonneCourant, Index, Cout2),
     heuristiqueGagne(Board, NumeroColonneCourant, Player, Index, Cout3),
     heuristiqueAdverseGagne(Board, NumeroColonneCourant, Player, Index, Cout4),
     (
     (Cout4 == 0 ,Cout is 0)
-    ; Cout4\=0, Cout is (Cout1 + Cout2 + Cout3 )
+    ; Cout4\=0, Cout is (Cout1 + Cout2 + Cout3 + Cout5)
     ),
     NouveauNumeroCourant is NumeroColonneCourant + 1,
     (
