@@ -26,7 +26,7 @@ board([
 % Vérifications de fin de jeu
 
 %Les diagonales
-diagonal_unit(Board, 7, LI, FINAL, R) :- append([], FINAL, R).
+diagonal_unit(_, 7, _, FINAL, R) :- append([], FINAL, R).
 diagonal_unit(Board, EI, LI, FINAL, R) :-
                 nth1(LI, Board,  L),% On récupère la colonne.
                 nth1(EI, L, X),     % On récupère le bon élément. 
@@ -37,7 +37,7 @@ diagonal_unit(Board, EI, LI, FINAL, R) :-
                 %write("par : "), write(NEI), write(" , "), write(NLI), nl,
                 diagonal_unit(Board, NEI, NLI, F, R).
 
-            diagonal_unit_b(Board, EI, 8, FINAL, R) :- append([], FINAL, R).
+diagonal_unit_b(_, _, 8, FINAL, R) :- append([], FINAL, R).
 diagonal_unit_b(Board, EI, LI, FINAL, R) :-
                 nth1(LI, Board,  L),% On récupère la colonne.
                 nth1(EI, L, X),     % On récupère le bon élément. 
@@ -58,7 +58,7 @@ diagonal_unit_dc(Board, EI, LI, FINAL, R) :-
                 incr(LI, NLI),
                 %write("par : "), write(NEI), write(" , "), write(NLI), nl,
                 diagonal_unit_dc(Board, NEI, NLI, F, R).
-diagonal_unit_dc(Board, 0, LI, FINAL, R) :- append([], FINAL, R).
+diagonal_unit_dc(_, 0, _, FINAL, R) :- append([], FINAL, R).
 diagonal_unit_dc_b(Board, EI, LI, FINAL, R)  :-
                 nth1(LI, Board,  L),% On récupère la colonne.
                 nth1(EI, L, X),     % On récupère le bon élément. 
@@ -69,7 +69,7 @@ diagonal_unit_dc_b(Board, EI, LI, FINAL, R)  :-
                 incr(LI, NLI),
                 %write("par : "), write(NEI), write(" , "), write(NLI), nl,
                 diagonal_unit_dc_b(Board, NEI, NLI, F, R).
-diagonal_unit_dc_b(Board, EI, 8, FINAL, R) :- append([], FINAL, R).
+diagonal_unit_dc_b(_, _, 8, FINAL, R) :- append([], FINAL, R).
 
 winnerDiagonal(Board, Player) :- 
     diagonal_unit(Board,        1, 1, [], R), winnerColonne(R, Player); 
@@ -107,7 +107,6 @@ winnerColonne([Y|B], X) :-
 
 winnerLigne(Board, X, Num):-
     extract(Num, Board, L1),
-<<<<<<< HEAD
     winnerColonne(L1, X).
 
 winnerLigne2(Board, X) :-
@@ -122,9 +121,6 @@ winnerLigne2(Board, X) :-
 
 
 
-checkall(Board, Player) :-
-=======
-    winnerColonne(L1, X).    
 
 isBoardFull(_, 7).
 isBoardFull(Board, I) :-
@@ -141,11 +137,16 @@ isWinner(Board, Player) :-
     nth0(4, Board, C), winnerColonne(C, Player);
     nth0(5, Board, C), winnerColonne(C, Player);
     nth0(6, Board, C), winnerColonne(C, Player);
-    winnerLigne2(Board, Player);
-    winnerDiagonal(Board, Player).
-
-
-
+    winnerLigne(Board, Player, 0);
+    winnerLigne(Board, Player, 1);
+    winnerLigne(Board, Player, 2);
+    winnerLigne(Board, Player, 3);
+    winnerLigne(Board, Player, 4);
+    winnerLigne(Board, Player, 5);
+    winnerLigne(Board, Player, 6);
+    winnerLigne(Board, Player, 7);
+    winnerDiagonal(Board, Player). 
+   
 win(Board) :-
     isWinner(Board, 'X'),
 	write('X a gagné !'), nl, writeln('FIN'),
