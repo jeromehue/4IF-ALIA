@@ -222,11 +222,43 @@ heuristiqueGagne(Board, NumeroColonneCourant, Player, Index, Cout):-
 % Prioriser les coups offrant
 % le plus de possibilités d’alignement
 % et réduisant ceux de l’adversaire
-ia2(_, _, _).
+ia2([], _, Move, _, Move, _, _).
+ia2([T|Q], Board, Move, Player, NumeroColonneMax, CoutMax, NumeroColonneCourant) :-
+    %nth0(NumeroColonneCourant, Board, Col),
+    not(nth0(5, T, '-')), % on vérifie que la colonne n est pas pleine
+    NouveauNumeroCourant is NumeroColonneCourant + 1,
+    ia2(Q, Board, Move, Player, NumeroColonneMax, CoutMax, NouveauNumeroCourant); % si elle est pleine, on continue
+    indexForColumn(T, 0, Index),
+    heuristiqueVoisins(Board, NumeroColonneCourant, Player, Index, Cout),
+    NouveauNumeroCourant is NumeroColonneCourant + 1,
+    (
+        Cout > CoutMax -> ia2(Q, Board, Move, Player, NumeroColonneCourant, Cout, NouveauNumeroCourant)
+	;   ia2(Q, Board, Move, Player, NumeroColonneMax, CoutMax, NouveauNumeroCourant)
+	).
+
+% heuristique de l'IA2
+heuristiqueVoisins(Board, NumeroColonneCourant, Player, Index, Cout):-
+ 	playMove(Board, NewBoard, NumeroColonneCourant, Player, Index),
+
+ 	% Récupère la colonne
+ 	nth0(NumeroColonneCourant, NewBoard, C),
+ 	writeln(C),
+ 	% evalue et affecte le cout
+
+ 	%Récupère la ligne
+ 	extract(Index, NewBoard, Line),
+ 	writeln(Line),
+ 	heurLine(Line, Player, CostLine, 0),
+
+ 	% Récupère la diagonale,
+ 	%diagonal_unit(),
+ 	% Evalue la diagonale et affecte le coup.
+
+ 	Cout is CostLine.
 
 % Analyse d'un tableau Line pour en sortir le cout total
 heurLine(Line, _, TotalCost, TotalCost):-
-    length(Line, 3),
+    length(Line, 3).
 heurLine(Line, Player, FinalCost, Cost):-
     take(4, Line, Quadruplet),
     Line=[_|Q],
@@ -278,15 +310,15 @@ currentMove([_|P2], Player, Move, Board) :-
 	P2 == 'C',
     ia1(Board, Board, Move, Player, 0, 0, 0).
 
-%currentMove([P1|_], Player, Move, Board) :-
-%	Player == 'X',
-%	P1 == 'D',
-%	ia2().
+currentMove([P1|_], Player, Move, Board) :-
+	Player == 'X',
+	P1 == 'D',
+	ia2(Board, Board, Move, Player, 0, 0, 0).
 
-%currentMove([_|P2], Player, Move, Board) :-
-%	Player == 'O',
-%	P2 == 'D',
-%    ia2().
+currentMove([_|P2], Player, Move, Board) :-
+	Player == 'O',
+	P2 == 'D',
+    ia2(Board, Board, Move, Player, 0, 0, 0).
 
 currentMove([P1|_], Player, Move, Board) :-
 	Player == 'X',
