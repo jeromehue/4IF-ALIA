@@ -282,10 +282,10 @@ heurCol(Col, Index, Player, Cout):-
     compterAvant(Col, Index, Player, 0, NbAligne),
     (
         (NbAligne == 1, Index > 2;
-    NbAligne == 2, Index > 3;
-    NbAligne == 3, Index > 4) 
-    -> Cout is 0 ;
-    Cout is NbAligne*NbAligne*NbAligne
+        NbAligne == 2, Index > 3;
+        NbAligne == 3, Index > 4) 
+        -> Cout is 0 ;
+        Cout is NbAligne*NbAligne*NbAligne
     ).
 
 % Prioriser les coups offrant
@@ -297,11 +297,13 @@ ia2([T|Q], Board, Move, Player, NumeroColonneMax, CoutMax, NumeroColonneCourant)
     not(nth0(5, T, '-')), % on vérifie que la colonne n est pas pleine
     NouveauNumeroCourant is NumeroColonneCourant + 1,
     ia2(Q, Board, Move, Player, NumeroColonneMax, CoutMax, NouveauNumeroCourant); % si elle est pleine, on continue
+    writeln("IA2"),
     indexForColumn(T, 0, Index),
-    heuristiqueVoisins(Board, NumeroColonneCourant, Player, Index, Cout1),
-    heuristic1(NumeroColonneCourant, Index, Cout2),
-    heuristiqueGagne(Board, NumeroColonneCourant, Player, Index, Cout3),
-    Cout is (Cout1 + Cout2 + Cout3),
+    heuristiqueVoisins(Board, NumeroColonneCourant, Player, Index, Cout),
+    %heuristic1(NumeroColonneCourant, Index, Cout2),
+    %heuristiqueGagne(Board, NumeroColonneCourant, Player, Index, Cout3),
+    %Cout is (Cout1 + Cout3),
+    write(NumeroColonneCourant), write(" COUTFINAL : "),writeln(Cout),
     NouveauNumeroCourant is NumeroColonneCourant + 1,
     (
         Cout > CoutMax -> ia2(Q, Board, Move, Player, NumeroColonneCourant, Cout, NouveauNumeroCourant)
@@ -314,46 +316,46 @@ heuristiqueVoisins(Board, NumeroColonneCourant, Player, Index, Cout):-
 
  	% Récupère la colonne
  	nth0(NumeroColonneCourant, NewBoard, C),
- 	writeln(C),
  	heurCol(C, Index, Player, CoutCol),
 
  	%Récupère la ligne
  	extract(Index, NewBoard, Line),
- 	writeln(Line),
  	heurLine(Line, Player, CoutLigne, 0),
+    write(Line),
+    writeln("FINLIGNE"),
     
     % Récupère la diagonale hd,
     diagonal_hd(NewBoard, Index, NumeroColonneCourant, [], R1),
     decr(Index, I2), decr(NumeroColonneCourant, N2),
     diagonal_bg(NewBoard, I2, N2, [], R2),
-    append(R1,R2,DHD), writeln(DHD),
+    append(R1,R2,DHD), write(DHD),writeln("FINDIAG1"),
     heurLine(DHD, Player, CoutDiag1, 0),
 
     diagonal_hg(NewBoard, Index, NumeroColonneCourant, [], R3),
     decr(Index, I4), incr(NumeroColonneCourant, N4),
     diagonal_bd(NewBoard, I4, N4, [], R4),
-    append(R3,R4,DHGBD), writeln(DHGBD),
+    append(R3,R4,DHGBD), write(DHGBD),writeln("FINDIAG2"),
     heurLine(DHGBD, Player, CoutDiag2, 0),
 
     write("COUTLIGNE : "),writeln(CoutLigne),
     write("COUTCOLONNE : "),writeln(CoutCol),
-    write("COUTDIAG1 : "),writeln(CoutDiag1),
-    write("COUTDIAG2 : "),writeln(CoutDiag2),
+    %write("COUTDIAG1 : "),writeln(CoutDiag1),
+    %write("COUTDIAG2 : "),writeln(CoutDiag2),
 
-    Cout is (CoutLigne + CoutCol + CoutDiag1 + CoutDiag2),
-    write("COUT : "),writeln(Cout),
-
- 	Cout is (CoutLigne + CoutCol + CoutDiag1 + CoutDiag2).
+    %Cout is (CoutLigne + CoutCol + CoutDiag1 + CoutDiag2),
+    Cout is CoutLigne + CoutCol,
+    write("COUT : "),writeln(Cout).
 
 % Analyse d un tableau Line pour en sortir le cout total
 heurLine(Line, _, TotalCost, TotalCost):-
-    length(Line, 3).
+    length(Line, Longueur), Longueur < 4.
 heurLine(Line, Player, FinalCost, Cost):-
     take(4, Line, Quadruplet),
     Line=[_|Q],
+    changePlayer(Player, NextPlayer),
     (
-        changePlayer(Player, NextPlayer), member(NextPlayer, Quadruplet) -> heurLine(Q, Player, FinalCost, Cost)
-	;   count(Player, Quadruplet, Occur), CostQuadruplet is Cost+Occur*Occur*Occur, writeln(CostQuadruplet), heurLine(Q, Player, FinalCost, CostQuadruplet)
+        member(NextPlayer, Quadruplet) -> heurLine(Q, Player, FinalCost, Cost)
+	;   count(Player, Quadruplet, Occur), CostQuadruplet is Cost+Occur*Occur*Occur, heurLine(Q, Player, FinalCost, CostQuadruplet)
 	).
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -479,12 +481,6 @@ take(N, [H|TA], [H|TB]) :-
 	N > 0,
 	N2 is N - 1,
 	take(N2, TA, TB).
-
-premierElement([X]) :- write(X).
-premierElement([H|T]) :-
-	nl,
-	write(H),
- 	premierElement(T).
 
 extract(ColNumber, Matrix, Column) :-
     maplist(nth0(ColNumber), Matrix, Column).
