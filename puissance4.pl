@@ -299,6 +299,7 @@ ia2([T|Q], Board, Move, Player, NumeroColonneMax, CoutMax, NumeroColonneCourant)
     ia2(Q, Board, Move, Player, NumeroColonneMax, CoutMax, NouveauNumeroCourant); % si elle est pleine, on continue
     indexForColumn(T, 0, Index),
     heuristiqueVoisins(Board, NumeroColonneCourant, Player, Index, Cout1),
+    writeln("\n FINISHING FOR IA2 \n"),
     heuristic1(NumeroColonneCourant, Index, Cout2),
     heuristiqueGagne(Board, NumeroColonneCourant, Player, Index, Cout3),
     Cout is (Cout1 + Cout2 + Cout3),
@@ -310,50 +311,57 @@ ia2([T|Q], Board, Move, Player, NumeroColonneMax, CoutMax, NumeroColonneCourant)
 
 % heuristique de l IA2
 heuristiqueVoisins(Board, NumeroColonneCourant, Player, Index, Cout):-
- 	playMove(Board, NewBoard, NumeroColonneCourant, Player, Index),
+    write("############### COLONNE TESTEE : "), write(NumeroColonneCourant),
+    writeln(" ###############"),
+    
+    playMove(Board, NewBoard, NumeroColonneCourant, Player, Index),
 
  	% Récupère la colonne
  	nth0(NumeroColonneCourant, NewBoard, C),
- 	writeln(C),
- 	heurCol(C, Index, Player, CoutCol),
+ 	write("Colonne      : "),writeln(C),
+    heurCol(C, Index, Player, CoutCol),
 
  	%Récupère la ligne
  	extract(Index, NewBoard, Line),
- 	writeln(Line),
- 	heurLine(Line, Player, CoutLigne, 0),
+ 	write("Ligne        : "), writeln(Line),
+    heurLine(Line, Player, CoutLigne, 0),
     
     % Récupère la diagonale hd,
     diagonal_hd(NewBoard, Index, NumeroColonneCourant, [], R1),
     decr(Index, I2), decr(NumeroColonneCourant, N2),
     diagonal_bg(NewBoard, I2, N2, [], R2),
-    append(R1,R2,DHD), writeln(DHD),
+    append(R1,R2,DHD), 
+    write("Diagonale 1  : "),writeln(DHD),
     heurLine(DHD, Player, CoutDiag1, 0),
 
     diagonal_hg(NewBoard, Index, NumeroColonneCourant, [], R3),
     decr(Index, I4), incr(NumeroColonneCourant, N4),
     diagonal_bd(NewBoard, I4, N4, [], R4),
-    append(R3,R4,DHGBD), writeln(DHGBD),
+    append(R3,R4,DHGBD), 
+    write("Diagonale 2  : "), writeln(DHGBD),
     heurLine(DHGBD, Player, CoutDiag2, 0),
 
-    write("COUTLIGNE : "),writeln(CoutLigne),
-    write("COUTCOLONNE : "),writeln(CoutCol),
-    write("COUTDIAG1 : "),writeln(CoutDiag1),
-    write("COUTDIAG2 : "),writeln(CoutDiag2),
+    %write("COUTLIGNE    : "),writeln(CoutLigne),
+    %write("COUTCOLONNE  : "),writeln(CoutCol),
+    %write("COUTDIAG1    : "),writeln(CoutDiag1),
+    %write("COUTDIAG2    : "),writeln(CoutDiag2),
 
-    Cout is (CoutLigne + CoutCol + CoutDiag1 + CoutDiag2),
-    write("COUT : "),writeln(Cout),
+    %random(0,100, Cout),
+    %Cout is CoutLigne + CoutCol,
+    %write("COUT         : "),writeln(Cout).
 
- 	Cout is (CoutLigne + CoutCol + CoutDiag1 + CoutDiag2).
+    Cout is (CoutLigne + CoutCol + CoutDiag1 + CoutDiag2).
 
 % Analyse d un tableau Line pour en sortir le cout total
 heurLine(Line, _, TotalCost, TotalCost):-
-    length(Line, 3).
+    length(Line, Longueur),
+    Longueur < 4.
 heurLine(Line, Player, FinalCost, Cost):-
     take(4, Line, Quadruplet),
     Line=[_|Q],
     (
         changePlayer(Player, NextPlayer), member(NextPlayer, Quadruplet) -> heurLine(Q, Player, FinalCost, Cost)
-	;   count(Player, Quadruplet, Occur), CostQuadruplet is Cost+Occur*Occur*Occur, writeln(CostQuadruplet), heurLine(Q, Player, FinalCost, CostQuadruplet)
+	;   count(Player, Quadruplet, Occur), CostQuadruplet is Cost+Occur*Occur*Occur, heurLine(Q, Player, FinalCost, CostQuadruplet)
 	).
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
