@@ -29,7 +29,7 @@ board([
 diagonal_unit(_, 7, _, FINAL, R) :- append([], FINAL, R).
 diagonal_unit(Board, EI, LI, FINAL, R) :-
                 nth1(LI, Board,  L),% On récupère la colonne.
-                nth1(EI, L, X),     % On récupère le bon élément. 
+                nth1(EI, L, X),     % On récupère le bon élément.
                 %write(X),nl,
                 append(FINAL, [X], F), % Ajout à la diagonale
                 incr(EI, NEI),
@@ -40,7 +40,7 @@ diagonal_unit(Board, EI, LI, FINAL, R) :-
 diagonal_unit_b(_, _, 8, FINAL, R) :- append([], FINAL, R).
 diagonal_unit_b(Board, EI, LI, FINAL, R) :-
                 nth1(LI, Board,  L),% On récupère la colonne.
-                nth1(EI, L, X),     % On récupère le bon élément. 
+                nth1(EI, L, X),     % On récupère le bon élément.
                 %write(X),nl,
                 append(FINAL, [X], F), % Ajout à la diagonale
                 %write(F),nl,
@@ -50,7 +50,7 @@ diagonal_unit_b(Board, EI, LI, FINAL, R) :-
                 diagonal_unit_b(Board, NEI, NLI, F, R).
 diagonal_unit_dc(Board, EI, LI, FINAL, R) :-
                 nth1(LI, Board,  L),% On récupère la colonne.
-                nth1(EI, L, X),     % On récupère le bon élément. 
+                nth1(EI, L, X),     % On récupère le bon élément.
                 %write(X),nl,
                 append(FINAL, [X], F), % Ajout à la diagonale
                 %write(F),nl,
@@ -61,7 +61,7 @@ diagonal_unit_dc(Board, EI, LI, FINAL, R) :-
 diagonal_unit_dc(_, 0, _, FINAL, R) :- append([], FINAL, R).
 diagonal_unit_dc_b(Board, EI, LI, FINAL, R)  :-
                 nth1(LI, Board,  L),% On récupère la colonne.
-                nth1(EI, L, X),     % On récupère le bon élément. 
+                nth1(EI, L, X),     % On récupère le bon élément.
                 %write(X),nl,
                 append(FINAL, [X], F), % Ajout à la diagonale
                 %write(F),nl,
@@ -71,8 +71,8 @@ diagonal_unit_dc_b(Board, EI, LI, FINAL, R)  :-
                 diagonal_unit_dc_b(Board, NEI, NLI, F, R).
 diagonal_unit_dc_b(_, _, 8, FINAL, R) :- append([], FINAL, R).
 
-winnerDiagonal(Board, Player) :- 
-    diagonal_unit(Board,        1, 1, [], R), winnerColonne(R, Player); 
+winnerDiagonal(Board, Player) :-
+    diagonal_unit(Board,        1, 1, [], R), winnerColonne(R, Player);
     diagonal_unit(Board,        2, 1, [], R), winnerColonne(R, Player);
     diagonal_unit(Board,        3, 1, [], R), winnerColonne(R, Player);
     diagonal_unit(Board,        4, 1, [], R), winnerColonne(R, Player);
@@ -145,8 +145,8 @@ isWinner(Board, Player) :-
     winnerLigne(Board, Player, 5);
     winnerLigne(Board, Player, 6);
     winnerLigne(Board, Player, 7);
-    winnerDiagonal(Board, Player). 
-   
+    winnerDiagonal(Board, Player).
+
 win(Board) :-
     isWinner(Board, 'X'),
 	write('X a gagné !'), nl, writeln('FIN'),
@@ -162,7 +162,7 @@ win(Board) :-
 % Affichage du plateau
 
 display(_, 7, _).
-display(N, I, Board) :- 
+display(N, I, Board) :-
     nth0(I, Board, Col), nth0(N, Col, Cell),
     write(Cell), write('  '), J is I+1, display(N, J, Board).
 
@@ -179,7 +179,7 @@ displayBoard(Board) :-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Initialisation des joueurs
 
-humanOrAI([P1|P2]):- 
+humanOrAI([P1|P2]):-
 	writeln('Player 1, (H)uman or (C)omputer :'),
 	get_char(P1),
 	get_code(_),
@@ -200,22 +200,30 @@ ia(Board, Move, _) :-
 % le plus de possibilités d’alignement
 ia1([], Move, _, Move, _, _).
 ia1([T|Q], Move, _, NumeroColonneMax, CoutMax, NumeroColonneCourant) :-
-    not(nth0(5, T, '-')), % on vérifie que la colonne n'est pas pleine
+    not(nth0(5, T, '-')), % on vérifie que la colonne n est pas pleine
     NouveauNumeroCourant is NumeroColonneCourant + 1,
     ia1(Q, Move, _, NumeroColonneMax, CoutMax, NouveauNumeroCourant); % si elle est pleine, on continue
     indexForColumn(T, 0, Index),
-    heuristique1(NumeroColonneCourant, Index, Cout),
+    heuristic1(NumeroColonneCourant, Index, Cout),
     NouveauNumeroCourant is NumeroColonneCourant + 1,
-    (  
+    (
         Cout > CoutMax -> writeln("oui"), ia1(Q, Move, _, NumeroColonneCourant, Cout, NouveauNumeroCourant)
 	;   writeln("sinon"), ia1(Q, Move, _, NumeroColonneMax, CoutMax, NouveauNumeroCourant)
 	).
 
-%heuristique toute nulle à changer !
-heuristique1(_, NumIndex, Cout) :-
-    NumIndex < 6,
-    Cout is NumIndex;
-    Cout is 0.
+
+
+  % heuristique offrant le plus de possibilités d alignement
+    heuristic1(NumCol, NumLine, Cost):-
+        HeuristicArray = [  [ 3 , 4 , 5 , 5 , 4 , 3 ],
+                            [ 4 , 6 , 8 , 8 , 6 , 4 ],
+                            [ 5 , 8 ,11 ,11 , 8 , 5 ],
+                            [ 7 ,10 ,13 ,13 ,10 , 7 ],
+                            [ 5 , 8 ,11 ,11 , 8 , 5 ],
+                            [ 4 , 6 , 8 , 8 , 6 , 4 ],
+                            [ 3 , 4 , 5 , 5 , 4 , 3 ] ]
+      ,colonneN(HeuristicArray, NumCol, Col)
+      ,colonneN(Col, NumLine, Cost).
 
 % Prioriser les coups offrants
 % le plus de possibilités d’alignement
@@ -226,7 +234,7 @@ ia2(_, _, _).
 % Déroulement du jeu
 
 % The game is not over, we play the next turn
-play(Player, Board, Human) :- 
+play(Player, Board, Human) :-
 	displayBoard(Board),
 	write('Au tour de : '), writeln(Player),
     currentMove(Human, Player, Move, Board),
@@ -245,7 +253,7 @@ currentMove([P1|_], Player, Move, Board) :-
 	(  not(isValidMove(PossibleMove, Board)) -> currentMove([P1|_], Player, Move, Board)
 	;   Move is PossibleMove
 	).
-	
+
 currentMove([_|P2], Player, Move, Board) :-
 	Player == 'O',
 	P2 == 'H',
@@ -259,7 +267,7 @@ currentMove([P1|_], Player, Move, Board) :-
 	Player == 'X',
 	P1 == 'C',
 	ia1(Board, Move, Player, 0, 0, 0).
-	
+
 currentMove([_|P2], Player, Move, Board) :-
 	Player == 'O',
 	P2 == 'C',
@@ -277,12 +285,12 @@ isValidMove(Move, Board) :-
 indexForMove(Board, Move, Index) :-
 	colonneN(Board, Move, Col),
     indexForColumn(Col, 0, Index).
-    
+
 indexForColumn([T|_], Index, Index) :- T = '-'.
 indexForColumn([_|H], Index, NewIndex) :-
     Tmp is Index+1,
     indexForColumn(H, Tmp, NewIndex).
-	
+
 playMove(Board, NewBoard, Move, Player, Index) :-
 	Index < 7,
     colonneN(Board, Move, Col),
@@ -295,7 +303,7 @@ applyMoveColumn(Col, NewCol, Index, Player) :-
     append(T, ['-'|H], Col),
     append(T, [Player|H], NewCol).
 	% take(Index, Col, T), length(T, Index), H is ['-'|Q], H2 is [Player|Q].
-	
+
 applyMoveBoard(Board, NewBoard, Col, NewCol, Move) :-
 	take(Move, Board, T),
     append(T, [Col|H], Board),
@@ -317,15 +325,15 @@ init :-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Prédicats utiles
 
-% Take the first N elements from List and unify this with FirstElements. 
-% The definition is based on the GNU-Prolog lists library. 
+% Take the first N elements from List and unify this with FirstElements.
+% The definition is based on the GNU-Prolog lists library.
 % Implementation by Jan Wielemaker.
 take(0, _, []) :- !.
 take(N, [H|TA], [H|TB]) :-
 	N > 0,
 	N2 is N - 1,
 	take(N2, TA, TB).
-	
+
 % colonneN(Board, n, Col) returns n-th column of board in Col
 colonneN([T|_], 0, T).
 colonneN([_|Q], C, X) :-
@@ -333,7 +341,7 @@ colonneN([_|Q], C, X) :-
     colonneN(Q, C1, X).
 
 premierElement([X]) :- write(X).
-premierElement([H|T]) :- 
+premierElement([H|T]) :-
 	nl,
 	write(H),
  	premierElement(T).
