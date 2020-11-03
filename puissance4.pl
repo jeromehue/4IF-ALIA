@@ -294,32 +294,34 @@ ia2([T|Q], Board, Move, Player, NumeroColonneMax, CoutMax, NumeroColonneCourant)
 	;   ia2(Q, Board, Move, Player, NumeroColonneMax, CoutMax, NouveauNumeroCourant)
 	).
 
-% heuristique de l'IA2
+% heuristique de l IA2
 heuristiqueVoisins(Board, NumeroColonneCourant, Player, Index, Cout):-
  	playMove(Board, NewBoard, NumeroColonneCourant, Player, Index),
 
  	% Récupère la colonne
  	nth0(NumeroColonneCourant, NewBoard, C),
  	writeln(C),
- 	% evalue et affecte le cout
+ 	heurCol(Col, Index, Player, CoutCol),
 
  	%Récupère la ligne
  	extract(Index, NewBoard, Line),
  	writeln(Line),
- 	heurLine(Line, Player, CostLine, 0),
+ 	heurLine(Line, Player, CoutLigne, 0),
     
     % Récupère la diagonale hd,
     diagonal_hd(NewBoard, Index, NumeroColonneCourant, [], R1),
     decr(Index, I2), decr(NumeroColonneCourant, N2),
     diagonal_bg(NewBoard, I2, N2, [], R2),
     append(R1,R2,DHD), writeln(DHD),
+    heurLine(DHD, Player, CoutDiag1, 0),
 
     diagonal_hg(NewBoard, Index, NumeroColonneCourant, [], R3),
     decr(Index, I4), incr(NumeroColonneCourant, N4),
     diagonal_bd(NewBoard, I4, N4, [], R4),
     append(R3,R4,DHGBD), writeln(DHGBD),
+    heurLine(DHGBD, Player, CoutDiag2, 0),
 
- 	Cout is CostLine.
+ 	Cout is (CoutCol + CoutLigne + CoutDiag1 + CoutDiag2).
 
 % Analyse d un tableau Line pour en sortir le cout total
 heurLine(Line, _, TotalCost, TotalCost):-
