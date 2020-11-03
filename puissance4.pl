@@ -256,8 +256,8 @@ heuristic1(NumCol, NumLine, Cost):-
 heuristiqueGagne(Board, NumeroColonneCourant, Player, Index, Cout):-
     playMove(Board, NewBoard, NumeroColonneCourant, Player, Index),
     (
-        isWinner(NewBoard, Player) -> Cout is 1000
-    ;   changePlayer(Player, NextPlayer), playMove(Board, NewBoard2, NumeroColonneCourant, NextPlayer, Index), isWinner(NewBoard2, NextPlayer), Cout is 900
+        isWinner(NewBoard, Player) -> Cout is 10000
+    ;   changePlayer(Player, NextPlayer), playMove(Board, NewBoard2, NumeroColonneCourant, NextPlayer, Index), isWinner(NewBoard2, NextPlayer), Cout is 9000
     ;   Cout is 0
     ).
 
@@ -306,10 +306,8 @@ ia2([T|Q], Board, Move, Player, NumeroColonneMax, CoutMax, NumeroColonneCourant)
     heuristic1(NumeroColonneCourant, Index, Cout2),
     heuristiqueGagne(Board, NumeroColonneCourant, Player, Index, Cout3),
     heuristiqueAdverseGagne(Board, NumeroColonneCourant, Player, Index, Cout4),
-    (
-    (Cout4 == 0 ,Cout is 0)
-    ; Cout4\=0, Cout is (Cout1 + Cout2 + Cout3 + Cout5)
-    ),
+    
+    Cout is (Cout1 + Cout2 + Cout3 + Cout4 + Cout5),
     NouveauNumeroCourant is NumeroColonneCourant + 1,
     (
         Cout > CoutMax -> ia2(Q, Board, Move, Player, NumeroColonneCourant, Cout, NouveauNumeroCourant)
@@ -334,7 +332,7 @@ heuristiqueAdverseGagne(Board, NumeroColonneCourant, Player, Index, Cout):-
     changePlayer(Player, NextPlayer),
     Index1 is Index + 1,
     playMove(NewBoard, NewBoard2, NumeroColonneCourant, NextPlayer, Index1),
-    isWinner(NewBoard2, NextPlayer) -> Cout is 0 ; Cout is 1.
+    isWinner(NewBoard2, NextPlayer) -> Cout is -8000 ; Cout is 0.
 
 % heuristique de l IA2
 heuristiqueVoisins(Board, NumeroColonneCourant, Player, Index, Cout):-
