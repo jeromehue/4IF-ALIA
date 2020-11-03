@@ -378,3 +378,12 @@ decr(X, X1) :- X1 is X-1.
 % X est le dernier élément de la liste Y
 % Sert notamment au prédicat isBoardFull
 last(X,Y) :- append(_,[X],Y).
+
+% renvoie le nombre d'occurrences d'un élément dans une liste
+count(_, [], 0).
+count(Elem, [Elem|Q], OccurFinal) :-
+    !, 
+    count(Elem, Q, Occur),
+    OccurFinal is Occur + 1.
+count(Elem, [_|Q], Occur) :-
+    count(Elem, Q, Occur).
