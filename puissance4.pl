@@ -298,7 +298,10 @@ ia2([T|Q], Board, Move, Player, NumeroColonneMax, CoutMax, NumeroColonneCourant)
     NouveauNumeroCourant is NumeroColonneCourant + 1,
     ia2(Q, Board, Move, Player, NumeroColonneMax, CoutMax, NouveauNumeroCourant); % si elle est pleine, on continue
     indexForColumn(T, 0, Index),
-    heuristiqueVoisins(Board, NumeroColonneCourant, Player, Index, Cout),
+    heuristiqueVoisins(Board, NumeroColonneCourant, Player, Index, Cout1),
+    heuristic1(NumeroColonneCourant, Index, Cout2),
+    heuristiqueGagne(Board, NumeroColonneCourant, Player, Index, Cout3),
+    Cout is (Cout1 + Cout2 + Cout3),
     NouveauNumeroCourant is NumeroColonneCourant + 1,
     (
         Cout > CoutMax -> ia2(Q, Board, Move, Player, NumeroColonneCourant, Cout, NouveauNumeroCourant)
@@ -331,6 +334,14 @@ heuristiqueVoisins(Board, NumeroColonneCourant, Player, Index, Cout):-
     diagonal_bd(NewBoard, I4, N4, [], R4),
     append(R3,R4,DHGBD), writeln(DHGBD),
     heurLine(DHGBD, Player, CoutDiag2, 0),
+
+    write("COUTLIGNE : "),writeln(CoutLigne),
+    write("COUTCOLONNE : "),writeln(CoutCol),
+    write("COUTDIAG1 : "),writeln(CoutDiag1),
+    write("COUTDIAG2 : "),writeln(CoutDiag2),
+
+    Cout is (CoutLigne + CoutCol + CoutDiag1 + CoutDiag2),
+    write("COUT : "),writeln(Cout)
 
  	Cout is (CoutLigne + CoutCol + CoutDiag1 + CoutDiag2).
 
