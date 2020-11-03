@@ -312,7 +312,7 @@ heuristiqueVoisins(Board, NumeroColonneCourant, Player, Index, Cout):-
  	% Récupère la colonne
  	nth0(NumeroColonneCourant, NewBoard, C),
  	writeln(C),
- 	heurCol(Col, Index, Player, CoutCol),
+ 	heurCol(C, Index, Player, CoutCol),
 
  	%Récupère la ligne
  	extract(Index, NewBoard, Line),
@@ -332,7 +332,7 @@ heuristiqueVoisins(Board, NumeroColonneCourant, Player, Index, Cout):-
     append(R3,R4,DHGBD), writeln(DHGBD),
     heurLine(DHGBD, Player, CoutDiag2, 0),
 
- 	Cout is (CoutCol + CoutLigne + CoutDiag1 + CoutDiag2).
+ 	Cout is (CoutLigne + CoutCol + CoutDiag1 + CoutDiag2).
 
 % Analyse d un tableau Line pour en sortir le cout total
 heurLine(Line, _, TotalCost, TotalCost):-
