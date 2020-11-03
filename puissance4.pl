@@ -28,78 +28,83 @@ board([
 %Les diagonales
 diagonal_unit(_, 7, _, FINAL, R) :- append([], FINAL, R).
 diagonal_unit(Board, EI, LI, FINAL, R) :-
-                nth1(LI, Board,  L),% On récupère la colonne.
-                nth1(EI, L, X),     % On récupère le bon élément.
-                %write(X),nl,
-                append(FINAL, [X], F), % Ajout à la diagonale
-                incr(EI, NEI),
-                incr(LI, NLI),
-                %write("par : "), write(NEI), write(" , "), write(NLI), nl,
-                diagonal_unit(Board, NEI, NLI, F, R).
+    nth1(LI, Board,  L),% On récupère la colonne.
+    nth1(EI, L, X),     % On récupère le bon élément.
+    %write(X),nl,
+    append(FINAL, [X], F), % Ajout à la diagonale
+    incr(EI, NEI),
+    incr(LI, NLI),
+    %write("par : "), write(NEI), write(" , "), write(NLI), nl,
+    diagonal_unit(Board, NEI, NLI, F, R).
 
 diagonal_unit_b(_, _, 8, FINAL, R) :- append([], FINAL, R).
 diagonal_unit_b(Board, EI, LI, FINAL, R) :-
-                nth1(LI, Board,  L),% On récupère la colonne.
-                nth1(EI, L, X),     % On récupère le bon élément.
-                %write(X),nl,
-                append(FINAL, [X], F), % Ajout à la diagonale
-                %write(F),nl,
-                incr(EI, NEI),
-                incr(LI, NLI),
-                %write("par : "), write(NEI), write(" , "), write(NLI), nl,
-                diagonal_unit_b(Board, NEI, NLI, F, R).
+    nth1(LI, Board,  L),% On récupère la colonne.
+    nth1(EI, L, X),     % On récupère le bon élément.
+    %write(X),nl,
+    append(FINAL, [X], F), % Ajout à la diagonale
+    %write(F),nl,
+    incr(EI, NEI),
+    incr(LI, NLI),
+    %write("par : "), write(NEI), write(" , "), write(NLI), nl,
+    diagonal_unit_b(Board, NEI, NLI, F, R).
+    
 diagonal_unit_dc(Board, EI, LI, FINAL, R) :-
-                nth1(LI, Board,  L),% On récupère la colonne.
-                nth1(EI, L, X),     % On récupère le bon élément.
-                %write(X),nl,
-                append(FINAL, [X], F), % Ajout à la diagonale
-                %write(F),nl,
-                decr(EI, NEI),
-                incr(LI, NLI),
-                %write("par : "), write(NEI), write(" , "), write(NLI), nl,
-                diagonal_unit_dc(Board, NEI, NLI, F, R).
+    nth1(LI, Board,  L),% On récupère la colonne.
+    nth1(EI, L, X),     % On récupère le bon élément.
+    %write(X),nl,
+    append(FINAL, [X], F), % Ajout à la diagonale
+    %write(F),nl,
+    decr(EI, NEI),
+    incr(LI, NLI),
+    %write("par : "), write(NEI), write(" , "), write(NLI), nl,
+    diagonal_unit_dc(Board, NEI, NLI, F, R).
+    
 diagonal_unit_dc(_, 0, _, FINAL, R) :- append([], FINAL, R).
 diagonal_unit_dc_b(Board, EI, LI, FINAL, R)  :-
-                nth1(LI, Board,  L),% On récupère la colonne.
-                nth1(EI, L, X),     % On récupère le bon élément.
-                %write(X),nl,
-                append(FINAL, [X], F), % Ajout à la diagonale
-                %write(F),nl,
-                decr(EI, NEI),
-                incr(LI, NLI),
-                %write("par : "), write(NEI), write(" , "), write(NLI), nl,
-                diagonal_unit_dc_b(Board, NEI, NLI, F, R).
+    nth1(LI, Board,  L),% On récupère la colonne.
+    nth1(EI, L, X),     % On récupère le bon élément.
+    %write(X),nl,
+    append(FINAL, [X], F), % Ajout à la diagonale
+    %write(F),nl,
+    decr(EI, NEI),
+    incr(LI, NLI),
+    %write("par : "), write(NEI), write(" , "), write(NLI), nl,
+    diagonal_unit_dc_b(Board, NEI, NLI, F, R).
 diagonal_unit_dc_b(_, _, 8, FINAL, R) :- append([], FINAL, R).
 
 
 diagonal_hd(_, _, 7, FINAL, R) :- append([], FINAL, R).
 diagonal_hd(_, 6, _, FINAL, R) :- append([], FINAL, R).
 diagonal_hd(Board, EI, LI, FINAL, R) :-
-                nth0(LI, Board,  L), nth0(EI, L, X),     % On récupère le bon élément.
-                append(FINAL, [X], F), % Ajout à la diagonale
-                incr(EI, NEI),incr(LI, NLI),
-                diagonal_hd(Board, NEI, NLI, F, R).
+    nth0(LI, Board,  L), nth0(EI, L, X),     % On récupère le bon élément.
+    append(FINAL, [X], F), % Ajout à la diagonale
+    incr(EI, NEI),incr(LI, NLI),
+    diagonal_hd(Board, NEI, NLI, F, R).
+    
 diagonal_bg(_, _, -1, FINAL, R) :- append([], FINAL, R).
 diagonal_bg(_, -1, _, FINAL, R) :- append([], FINAL, R).
 diagonal_bg(Board, EI, LI, FINAL, R) :-
-                nth0(LI, Board,  L), nth0(EI, L, X),     % On récupère le bon élément.
-                append(FINAL, [X], F), % Ajout à la diagonale
-                decr(EI, NEI),decr(LI, NLI),
-                diagonal_bg(Board, NEI, NLI, F, R).
+    nth0(LI, Board,  L), nth0(EI, L, X),     % On récupère le bon élément.
+    append(FINAL, [X], F), % Ajout à la diagonale
+    decr(EI, NEI),decr(LI, NLI),
+    diagonal_bg(Board, NEI, NLI, F, R).
+    
 diagonal_hg(_, _, -1, FINAL, R) :- append([], FINAL, R).
 diagonal_hg(_, 6, _, FINAL, R) :- append([], FINAL, R).
 diagonal_hg(Board, EI, LI, FINAL, R) :-
-                nth0(LI, Board,  L), nth0(EI, L, X),     % On récupère le bon élément.
-                append(FINAL, [X], F), % Ajout à la diagonale
-                incr(EI, NEI),decr(LI, NLI),
-                diagonal_hg(Board, NEI, NLI, F, R).
+    nth0(LI, Board,  L), nth0(EI, L, X),     % On récupère le bon élément.
+    append(FINAL, [X], F), % Ajout à la diagonale
+    incr(EI, NEI),decr(LI, NLI),
+    diagonal_hg(Board, NEI, NLI, F, R).
+    
 diagonal_bd(_, _, 7, FINAL, R) :- append([], FINAL, R).
 diagonal_bd(_, -1, _, FINAL, R) :- append([], FINAL, R).
 diagonal_bd(Board, EI, LI, FINAL, R) :-
-                nth0(LI, Board,  L), nth0(EI, L, X),     % On récupère le bon élément.
-                append(FINAL, [X], F), % Ajout à la diagonale
-                decr(EI, NEI),incr(LI, NLI),
-                diagonal_bd(Board, NEI, NLI, F, R).
+    nth0(LI, Board,  L), nth0(EI, L, X),     % On récupère le bon élément.
+    append(FINAL, [X], F), % Ajout à la diagonale
+    decr(EI, NEI),incr(LI, NLI),
+    diagonal_bd(Board, NEI, NLI, F, R).
 
 
 winnerDiagonal(Board, Player) :-
