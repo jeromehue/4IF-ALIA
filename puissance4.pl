@@ -71,6 +71,37 @@ diagonal_unit_dc_b(Board, EI, LI, FINAL, R)  :-
                 diagonal_unit_dc_b(Board, NEI, NLI, F, R).
 diagonal_unit_dc_b(_, _, 8, FINAL, R) :- append([], FINAL, R).
 
+
+diagonal_hd(_, _, 7, FINAL, R) :- append([], FINAL, R).
+diagonal_hd(_, 6, _, FINAL, R) :- append([], FINAL, R).
+diagonal_hd(Board, EI, LI, FINAL, R) :-
+                nth0(LI, Board,  L), nth0(EI, L, X),     % On récupère le bon élément.
+                append(FINAL, [X], F), % Ajout à la diagonale
+                incr(EI, NEI),incr(LI, NLI),
+                diagonal_hd(Board, NEI, NLI, F, R).
+diagonal_bg(_, _, -1, FINAL, R) :- append([], FINAL, R).
+diagonal_bg(_, -1, _, FINAL, R) :- append([], FINAL, R).
+diagonal_bg(Board, EI, LI, FINAL, R) :-
+                nth0(LI, Board,  L), nth0(EI, L, X),     % On récupère le bon élément.
+                append(FINAL, [X], F), % Ajout à la diagonale
+                decr(EI, NEI),decr(LI, NLI),
+                diagonal_bg(Board, NEI, NLI, F, R).
+diagonal_hg(_, _, -1, FINAL, R) :- append([], FINAL, R).
+diagonal_hg(_, 6, _, FINAL, R) :- append([], FINAL, R).
+diagonal_hg(Board, EI, LI, FINAL, R) :-
+                nth0(LI, Board,  L), nth0(EI, L, X),     % On récupère le bon élément.
+                append(FINAL, [X], F), % Ajout à la diagonale
+                incr(EI, NEI),decr(LI, NLI),
+                diagonal_hg(Board, NEI, NLI, F, R).
+diagonal_bd(_, _, 7, FINAL, R) :- append([], FINAL, R).
+diagonal_bd(_, -1, _, FINAL, R) :- append([], FINAL, R).
+diagonal_bd(Board, EI, LI, FINAL, R) :-
+                nth0(LI, Board,  L), nth0(EI, L, X),     % On récupère le bon élément.
+                append(FINAL, [X], F), % Ajout à la diagonale
+                decr(EI, NEI),incr(LI, NLI),
+                diagonal_bd(Board, NEI, NLI, F, R).
+
+
 winnerDiagonal(Board, Player) :-
     diagonal_unit(Board,        1, 1, [], R), winnerColonne(R, Player);
     diagonal_unit(Board,        2, 1, [], R), winnerColonne(R, Player);
@@ -249,10 +280,17 @@ heuristiqueVoisins(Board, NumeroColonneCourant, Player, Index, Cout):-
  	extract(Index, NewBoard, Line),
  	writeln(Line),
  	heurLine(Line, Player, CostLine, 0),
+    
+    % Récupère la diagonale hd,
+    diagonal_hd(NewBoard, Index, NumeroColonneCourant, [], R1),
+    decr(Index, I2), decr(NumeroColonneCourant, N2),
+    diagonal_bg(NewBoard, I2, N2, [], R2),
+    append(R1,R2,DHD), writeln(DHD),
 
- 	% Récupère la diagonale,
- 	%diagonal_unit(),
- 	% Evalue la diagonale et affecte le coup.
+    diagonal_hg(NewBoard, Index, NumeroColonneCourant, [], R3),
+    decr(Index, I4), incr(NumeroColonneCourant, N4),
+    diagonal_bd(NewBoard, I4, N4, [], R4),
+    append(R3,R4,DHGBD), writeln(DHGBD),
 
  	Cout is CostLine.
 
