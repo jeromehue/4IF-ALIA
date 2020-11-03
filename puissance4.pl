@@ -198,17 +198,18 @@ ia1([T|Q], Move, _, NumeroColonneMax, CoutMax, NumeroColonneCourant) :-
 
 
 
-  % heuristique offrant le plus de possibilités d alignement
-    heuristic1(NumCol, NumLine, Cost):-
-        HeuristicArray = [  [ 3 , 4 , 5 , 5 , 4 , 3 ],
-                            [ 4 , 6 , 8 , 8 , 6 , 4 ],
-                            [ 5 , 8 ,11 ,11 , 8 , 5 ],
-                            [ 7 ,10 ,13 ,13 ,10 , 7 ],
-                            [ 5 , 8 ,11 ,11 , 8 , 5 ],
-                            [ 4 , 6 , 8 , 8 , 6 , 4 ],
-                            [ 3 , 4 , 5 , 5 , 4 , 3 ] ]
-      ,colonneN(HeuristicArray, NumCol, Col)
-      ,colonneN(Col, NumLine, Cost).
+% heuristique offrant le plus de possibilités d alignement
+heuristic1(NumCol, NumLine, Cost):-
+    HeuristicArray = [  [ 3 , 4 , 5 , 5 , 4 , 3 ],
+                        [ 4 , 6 , 8 , 8 , 6 , 4 ],
+                        [ 5 , 8 ,11 ,11 , 8 , 5 ],
+                        [ 7 ,10 ,13 ,13 ,10 , 7 ],
+                        [ 5 , 8 ,11 ,11 , 8 , 5 ],
+                        [ 4 , 6 , 8 , 8 , 6 , 4 ],
+                        [ 3 , 4 , 5 , 5 , 4 , 3 ] ],
+    nth0(NumCol, HeuristicArray, Col),
+    nth0(NumLine, Col, Cost),
+    writeln(Cost).
 
 % Prioriser les coups offrants
 % le plus de possibilités d’alignement
@@ -251,12 +252,12 @@ currentMove([_|P2], Player, Move, Board) :-
 currentMove([P1|_], Player, Move, Board) :-
 	Player == 'X',
 	P1 == 'C',
-	ia(Board, Move, Player). %ia1(Board, Move, Player, 0, 0, 0).
+	ia1(Board, Move, Player, 0, 0, 0). %ia(Board, Move, Player).
 	
 currentMove([_|P2], Player, Move, Board) :-
 	Player == 'O',
 	P2 == 'C',
-    ia(Board, Move, Player). %ia1(Board, Move, Player, 0, 0, 0).
+    ia1(Board, Move, Player, 0, 0, 0). %ia(Board, Move, Player).
 
 % TBD
 isValidMove(Move, Board) :-
@@ -268,7 +269,7 @@ isValidMove(Move, Board) :-
 
 % returns the index of first empty space for a move
 indexForMove(Board, Move, Index) :-
-	colonneN(Board, Move, Col),
+	nth0(Move, Board, Col),
     indexForColumn(Col, 0, Index).
 
 indexForColumn([T|_], Index, Index) :- T = '-'.
@@ -278,7 +279,7 @@ indexForColumn([_|H], Index, NewIndex) :-
 
 playMove(Board, NewBoard, Move, Player, Index) :-
 	Index < 7,
-    colonneN(Board, Move, Col),
+    nth0(Move, Board, Col),
     applyMoveColumn(Col, NewCol, Index, Player),
     applyMoveBoard(Board, NewBoard, Col, NewCol, Move).
 	% ;Index<7, NewIndex is Index+1, playMove(Board, NewBoard, Move, Player, NewIndex).
@@ -318,12 +319,6 @@ take(N, [H|TA], [H|TB]) :-
 	N > 0,
 	N2 is N - 1,
 	take(N2, TA, TB).
-
-% colonneN(Board, n, Col) returns n-th column of board in Col
-colonneN([T|_], 0, T).
-colonneN([_|Q], C, X) :-
-    C1 is C-1,
-    colonneN(Q, C1, X).
 
 premierElement([X]) :- write(X).
 premierElement([H|T]) :-
