@@ -183,20 +183,21 @@ ia(Board, Move, _) :-
 
 % Prioriser les coups offrants
 % le plus de possibilités d’alignement
-ia1([], Move, _, Move, _, _).
-ia1([T|Q], Move, _, NumeroColonneMax, CoutMax, NumeroColonneCourant) :-
+ia1([], _, Move, _, Move, _, _).
+ia1([T|Q], Board, Move, Player, NumeroColonneMax, CoutMax, NumeroColonneCourant) :-
     not(nth0(5, T, '-')), % on vérifie que la colonne n est pas pleine
     NouveauNumeroCourant is NumeroColonneCourant + 1,
-    ia1(Q, Move, _, NumeroColonneMax, CoutMax, NouveauNumeroCourant); % si elle est pleine, on continue
+    ia1(Q, Board, Move, Player, NumeroColonneMax, CoutMax, NouveauNumeroCourant); % si elle est pleine, on continue
     indexForColumn(T, 0, Index),
-    heuristic1(NumeroColonneCourant, Index, Cout),
+    heuristic1(NumeroColonneCourant, Index, Cout1),
+    heuristiqueGagne(Board, NumeroColonneCourant, Player, Index, Cout2),
+    Cout is Cout1 + Cout2,
+    writeln(Cout),
     NouveauNumeroCourant is NumeroColonneCourant + 1,
     (
-        Cout > CoutMax -> writeln("oui"), ia1(Q, Move, _, NumeroColonneCourant, Cout, NouveauNumeroCourant)
-	;   writeln("sinon"), ia1(Q, Move, _, NumeroColonneMax, CoutMax, NouveauNumeroCourant)
+        Cout > CoutMax -> writeln("oui"), ia1(Q, Board, Move, Player, NumeroColonneCourant, Cout, NouveauNumeroCourant)
+	;   writeln("sinon"), ia1(Q, Board, Move, Player, NumeroColonneMax, CoutMax, NouveauNumeroCourant)
 	).
-
-
 
 % heuristique offrant le plus de possibilités d alignement
 heuristic1(NumCol, NumLine, Cost):-
@@ -208,9 +209,17 @@ heuristic1(NumCol, NumLine, Cost):-
                         [ 4 , 6 , 8 , 8 , 6 , 4 ],
                         [ 3 , 4 , 5 , 5 , 4 , 3 ] ],
     nth0(NumCol, HeuristicArray, Col),
-    nth0(NumLine, Col, Cost),
-    writeln(Cost).
+    nth0(NumLine, Col, Cost).
 
+% Heuristique pour savoir si on peut gagner (+1000)
+heuristiqueGagne(Board, NumeroColonneCourant, Player, Index, Cout):-
+    playMove(Board, NewBoard, NumeroColonneCourant, Player, Index),
+    (
+        isWinner(NewBoard, Player) -> Cout is 1000
+    ;   changePlayer(Player, NextPlayer), playMove(Board, NewBoard2, NumeroColonneCourant, NextPlayer, Index), isWinner(NewBoard2, NextPlayer), Cout is 900
+    ;   Cout is 0
+    ).
+        
 % Prioriser les coups offrants
 % le plus de possibilités d’alignement
 % et réduisants ceux de l’adversaire
@@ -252,12 +261,12 @@ currentMove([_|P2], Player, Move, Board) :-
 currentMove([P1|_], Player, Move, Board) :-
 	Player == 'X',
 	P1 == 'C',
-	ia1(Board, Move, Player, 0, 0, 0). %ia(Board, Move, Player).
+	ia1(Board, Board, Move, Player, 0, 0, 0). %ia(Board, Move, Player).
 	
 currentMove([_|P2], Player, Move, Board) :-
 	Player == 'O',
 	P2 == 'C',
-    ia1(Board, Move, Player, 0, 0, 0). %ia(Board, Move, Player).
+    ia1(Board, Board, Move, Player, 0, 0, 0). %ia(Board, Move, Player).
 
 % TBD
 isValidMove(Move, Board) :-
