@@ -215,7 +215,7 @@ playerMenu([P1|P2], Board, NewBoard):-
 	read(P1),
     writeln('Player 2, 1. (Human), 2. (Random IA), 3. (IA1), 4. (IA2)'),
 	read(P2),
-    ( P is P1+P2, P = 7 ->  diversification(Board, NewBoard)  ; sleep(1), append([], Board, NewBoard) ).
+    ( P is P1+P2, P = 7 ->  diversification(Board, NewBoard)  ; sleep(0.1), append([], Board, NewBoard) ).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % IA

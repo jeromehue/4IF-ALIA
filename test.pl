@@ -304,6 +304,23 @@ getDiag() :-
 % Utilitary functions %
 %%%%%%%%%%%%%%%%%%%%%%%
 
+
+posList(Board, 7, L, R) :- append([], L, R).
+posList(Board, I, L, R) :-
+    nth0(I, Board, Column),
+    write(Column),
+    ( last('-', Column) -> 
+        append([I], L, L2),
+        J is I+1 
+    ;  append([], L, L2),
+        J is I+1
+    ),
+    posList(Board, J, L2, R).
+
+initlistpos :-
+    create2(X),
+    posList(X, 0, [], R),
+    write(R).
 % Incrementation of a variable
 incr(X,X1) :- X1 is X+1.
 
