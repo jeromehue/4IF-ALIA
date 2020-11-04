@@ -1,13 +1,20 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%    ALIA - Puissance 4 - Hexanôme 4414     %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%            ALIA - Puissance 4 - Hexanôme 4414            %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Jérôme Hue                                               %
+% Yohan Meyer                                              %
+% Lucie Clémenceau                                         %
+% Sylvain de Verclos                                       %
+% Quentin Régaud                                           %
+% Charly Poirier                                           %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Schématisation :
 %   - emplacement vide
-%   O pion de l’adversaire
 %   X pion du joueur
+%   O pion de l’adversaire
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Création du plateau
 % à 6 lignes et 7 colonnes
 
@@ -22,62 +29,50 @@ board([
 ]).
 :- dynamic board/1.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Vérifications de fin de jeu
 
-%Les diagonales
+% Vérification d'un(e) gagnant(e) en ligne
 diagonal_unit(_, 7, _, FINAL, R) :- append([], FINAL, R).
 diagonal_unit(Board, EI, LI, FINAL, R) :-
-    nth1(LI, Board,  L),% On récupère la colonne.
-    nth1(EI, L, X),     % On récupère le bon élément.
-    %write(X),nl,
+    nth1(LI, Board,  L), % On récupère la colonne.
+    nth1(EI, L, X), % On récupère le bon élément.
     append(FINAL, [X], F), % Ajout à la diagonale
     incr(EI, NEI),
     incr(LI, NLI),
-    %write("par : "), write(NEI), write(" , "), write(NLI), nl,
     diagonal_unit(Board, NEI, NLI, F, R).
 
 diagonal_unit_b(_, _, 8, FINAL, R) :- append([], FINAL, R).
 diagonal_unit_b(Board, EI, LI, FINAL, R) :-
-    nth1(LI, Board,  L),% On récupère la colonne.
-    nth1(EI, L, X),     % On récupère le bon élément.
-    %write(X),nl,
+    nth1(LI, Board,  L), % On récupère la colonne.
+    nth1(EI, L, X), % On récupère le bon élément.
     append(FINAL, [X], F), % Ajout à la diagonale
-    %write(F),nl,
     incr(EI, NEI),
     incr(LI, NLI),
-    %write("par : "), write(NEI), write(" , "), write(NLI), nl,
     diagonal_unit_b(Board, NEI, NLI, F, R).
 
 diagonal_unit_dc(Board, EI, LI, FINAL, R) :-
-    nth1(LI, Board,  L),% On récupère la colonne.
-    nth1(EI, L, X),     % On récupère le bon élément.
-    %write(X),nl,
+    nth1(LI, Board,  L), % On récupère la colonne.
+    nth1(EI, L, X), % On récupère le bon élément.
     append(FINAL, [X], F), % Ajout à la diagonale
-    %write(F),nl,
     decr(EI, NEI),
     incr(LI, NLI),
-    %write("par : "), write(NEI), write(" , "), write(NLI), nl,
     diagonal_unit_dc(Board, NEI, NLI, F, R).
 
 diagonal_unit_dc(_, 0, _, FINAL, R) :- append([], FINAL, R).
 diagonal_unit_dc_b(Board, EI, LI, FINAL, R)  :-
-    nth1(LI, Board,  L),% On récupère la colonne.
-    nth1(EI, L, X),     % On récupère le bon élément.
-    %write(X),nl,
+    nth1(LI, Board,  L), % On récupère la colonne.
+    nth1(EI, L, X), % On récupère le bon élément.
     append(FINAL, [X], F), % Ajout à la diagonale
-    %write(F),nl,
     decr(EI, NEI),
     incr(LI, NLI),
-    %write("par : "), write(NEI), write(" , "), write(NLI), nl,
     diagonal_unit_dc_b(Board, NEI, NLI, F, R).
 diagonal_unit_dc_b(_, _, 8, FINAL, R) :- append([], FINAL, R).
-
 
 diagonal_hd(_, _, 7, FINAL, R) :- append([], FINAL, R).
 diagonal_hd(_, 6, _, FINAL, R) :- append([], FINAL, R).
 diagonal_hd(Board, EI, LI, FINAL, R) :-
-    nth0(LI, Board,  L), nth0(EI, L, X),     % On récupère le bon élément.
+    nth0(LI, Board,  L), nth0(EI, L, X), % On récupère le bon élément.
     append(FINAL, [X], F), % Ajout à la diagonale
     incr(EI, NEI),incr(LI, NLI),
     diagonal_hd(Board, NEI, NLI, F, R).
@@ -85,7 +80,7 @@ diagonal_hd(Board, EI, LI, FINAL, R) :-
 diagonal_bg(_, _, -1, FINAL, R) :- append([], FINAL, R).
 diagonal_bg(_, -1, _, FINAL, R) :- append([], FINAL, R).
 diagonal_bg(Board, EI, LI, FINAL, R) :-
-    nth0(LI, Board,  L), nth0(EI, L, X),     % On récupère le bon élément.
+    nth0(LI, Board,  L), nth0(EI, L, X), % On récupère le bon élément.
     append(FINAL, [X], F), % Ajout à la diagonale
     decr(EI, NEI),decr(LI, NLI),
     diagonal_bg(Board, NEI, NLI, F, R).
@@ -93,7 +88,7 @@ diagonal_bg(Board, EI, LI, FINAL, R) :-
 diagonal_hg(_, _, -1, FINAL, R) :- append([], FINAL, R).
 diagonal_hg(_, 6, _, FINAL, R) :- append([], FINAL, R).
 diagonal_hg(Board, EI, LI, FINAL, R) :-
-    nth0(LI, Board,  L), nth0(EI, L, X),     % On récupère le bon élément.
+    nth0(LI, Board,  L), nth0(EI, L, X), % On récupère le bon élément.
     append(FINAL, [X], F), % Ajout à la diagonale
     incr(EI, NEI),decr(LI, NLI),
     diagonal_hg(Board, NEI, NLI, F, R).
@@ -101,11 +96,10 @@ diagonal_hg(Board, EI, LI, FINAL, R) :-
 diagonal_bd(_, _, 7, FINAL, R) :- append([], FINAL, R).
 diagonal_bd(_, -1, _, FINAL, R) :- append([], FINAL, R).
 diagonal_bd(Board, EI, LI, FINAL, R) :-
-    nth0(LI, Board,  L), nth0(EI, L, X),     % On récupère le bon élément.
+    nth0(LI, Board,  L), nth0(EI, L, X), % On récupère le bon élément.
     append(FINAL, [X], F), % Ajout à la diagonale
     decr(EI, NEI),incr(LI, NLI),
     diagonal_bd(Board, NEI, NLI, F, R).
-
 
 winnerDiagonal(Board, Player) :-
     diagonal_unit(Board,        1, 1, [], R), winnerColonne(R, Player);
@@ -133,16 +127,18 @@ winnerDiagonal(Board, Player) :-
     diagonal_unit_dc_b(Board,   6,6,[], R),winnerColonne(R, Player);
     diagonal_unit_dc_b(Board,   6,7,[], R),winnerColonne(R, Player).
 
-
+% Vérification d'un(e) gagnant(e) en colonne
 winnerColonne([Y|B], X) :-
     Y == X,
     B = [X,X,X|_];
     winnerColonne(B, X).
 
+% Vérification d'un(e) gagnant(e) en ligne
 winnerLigne(Board, X, Num):-
     extract(Num, Board, L1),
     winnerColonne(L1, X).
 
+% Vérification d'une égalité (plateau plein)
 isBoardFull(_, 7).
 isBoardFull(Board, I) :-
     nth0(I, Board, Column),
@@ -150,6 +146,7 @@ isBoardFull(Board, I) :-
     J is I+1, isBoardFull(Board, J).
 isBoardFull(Board) :- isBoardFull(Board, 0).
 
+% Vérification générale d'un(e) gagnant(e)
 isWinner(Board, Player) :-
     nth0(0, Board, C), winnerColonne(C, Player);
     nth0(1, Board, C), winnerColonne(C, Player);
@@ -168,7 +165,8 @@ isWinner(Board, Player) :-
     winnerLigne(Board, Player, 7);
     winnerDiagonal(Board, Player).
 
-win(Board) :-
+% Vérification générale de la fin du jeu
+finDeJeu(Board) :-
     isWinner(Board, 'X'),
 	write('X a gagné !'), nl, writeln('FIN'),
     replay;
@@ -179,14 +177,13 @@ win(Board) :-
     writeln('Égalité!'), nl, writeln('FIN'),
     replay.
 
+% Proposition de rejouer
 replay :-
-    writeln('Voulez-vous rejouer ? 1 (Oui) 2 (Non)'),
+    writeln('Voulez-vous rejouer ? 1. (Oui) 2. (Non)'),
     read(P1),
-    (
-        P1==1 -> init
-    ;   halt
-    ).
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    ( P1==1 -> init ; halt ).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Affichage du plateau
 
 display(_, 7, _).
@@ -202,37 +199,35 @@ displayBoard(Board) :-
     write(' '), display(2, 0, Board), nl,
     write(' '), display(1, 0, Board), nl,
     write(' '), display(0, 0, Board), nl,
-    not(win(Board)).
+    not(finDeJeu(Board)).
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Initialisation des joueurs
 
-humanOrAI([P1|P2]):-
-	writeln('Player 1, 1 (Human), 2 (Random IA), 3 (IA1), 4 (IA2)'),
+playerMenu([P1|P2]):-
+	writeln('Player 1, 1. (Human), 2. (Random IA), 3. (IA1), 4. (IA2)'),
 	read(P1),
-    writeln('Player 2, 1 (Human), 2 (Random IA), 3 (IA1), 4 (IA2)'),
+    writeln('Player 2, 1. (Human), 2. (Random IA), 3. (IA1), 4. (IA2)'),
 	read(P2).
 
-humanOrAI([P1|P2], Board, NewBoard):-
-	writeln('Player 1, 1 (Human), 2 (Random IA), 3 (IA1), 4 (IA2)'),
+playerMenu([P1|P2], Board, NewBoard):-
+	writeln('Player 1, 1. (Human), 2. (Random IA), 3. (IA1), 4. (IA2)'),
 	read(P1),
-    writeln('Player 2, 1 (Human), 2 (Random IA), 3 (IA1), 4 (IA2)'),
+    writeln('Player 2, 1. (Human), 2. (Random IA), 3. (IA1), 4. (IA2)'),
 	read(P2),
-    ( P is P1+P2, P = 7 ->  departs(Board, NewBoard)  ; sleep(1), append([], Board, NewBoard) ).
+    ( P is P1+P2, P = 7 ->  diversification(Board, NewBoard)  ; sleep(1), append([], Board, NewBoard) ).
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % IA
 
-% Jouer aléatoirement
+% IA Aléatoire
 randomIA(Board, Move, _) :-
     repeat,
 	random_between(0, 6, Move),
     isValidMove(Move, Board),
     !.
 
-% Prioriser les coups offrants
-% le plus de possibilités d’alignement
+% IA 1.0
 ia1([], _, Move, _, Move, _, _).
 ia1([T|Q], Board, Move, Player, NumeroColonneMax, CoutMax, NumeroColonneCourant) :-
     not(nth0(5, T, '-')), % on vérifie que la colonne n est pas pleine
@@ -248,7 +243,7 @@ ia1([T|Q], Board, Move, Player, NumeroColonneMax, CoutMax, NumeroColonneCourant)
 	;   ia1(Q, Board, Move, Player, NumeroColonneMax, CoutMax, NouveauNumeroCourant)
 	).
 
-% heuristique offrant le plus de possibilités d alignement
+% Heuristique offrant le plus de possibilités d alignement
 heuristic1(NumCol, NumLine, Cost):-
     HeuristicArray = [  [ 3 , 4 , 5 , 5 , 4 , 3 ],
                         [ 4 , 6 , 8 , 8 , 6 , 4 ],
@@ -272,69 +267,60 @@ heuristiqueGagne(Board, NumeroColonneCourant, Player, Index, Cout):-
 % Compter le nombre de pions alignés dans une colonne par rapport au dernier pion inséré
 compterAvant(_, -1, _, Cout, Cout).
 compterAvant(Col, Index, Player, Cout, CoutFin):-
-    % write("Index : "), writeln(Index),
     nth0(Index, Col, Val),
-    % write(Index), write(" : "), writeln(Val),
     ((Player == Val,
     NewCout is Cout + 1,
     NewIndex is Index-1,
-    % write("Cout "), writeln(NewCout),
     compterAvant(Col, NewIndex, Player, NewCout, CoutFin)
     );
     (Player \= Val,
     compterAvant(Col, -1, Player, Cout, CoutFin)
     )).
 
-% heuristique permettant donner un cout en fonction du nombre de pions alignés verticalement
+% Heuristique permettant donner un cout en fonction du nombre de pions alignés verticalement
 heurCol(Col, Index, Player, Cout):-
     compterAvant(Col, Index, Player, 0, NbAligne),
     (
         (NbAligne == 1, Index > 2;
         NbAligne == 2, Index > 3;
-        NbAligne == 3, Index > 4) 
+        NbAligne == 3, Index > 4)
         -> Cout is 0 ;
         Cout is NbAligne*NbAligne*NbAligne
     ).
 
-% Prioriser les coups offrant
-% le plus de possibilités d’alignement
-% et réduisant ceux de l’adversaire
+% IA 2.0
 ia2([], _, Move, _, Move, _, _).
 ia2([T|Q], Board, Move, Player, NumeroColonneMax, CoutMax, NumeroColonneCourant) :-
-    %nth0(NumeroColonneCourant, Board, Col),
-    not(nth0(5, T, '-')), % on vérifie que la colonne n est pas pleine
+    not(nth0(5, T, '-')), % On vérifie que la colonne n'est pas pleine
     NouveauNumeroCourant is NumeroColonneCourant + 1,
-    ia2(Q, Board, Move, Player, NumeroColonneMax, CoutMax, NouveauNumeroCourant); % si elle est pleine, on continue
-    writeln("IA2"),
+    ia2(Q, Board, Move, Player, NumeroColonneMax, CoutMax, NouveauNumeroCourant); % Si elle est pleine, on continue
     indexForColumn(T, 0, Index),
     heuristiqueVoisins(Board, NumeroColonneCourant, Player, Index, Cout1),
     changePlayer(Player, AutrePlayer),
     heuristiqueVoisins(Board, NumeroColonneCourant, AutrePlayer, Index, Cout5),
-    writeln("\n FINISHING FOR IA2 \n"),
     heuristic1(NumeroColonneCourant, Index, Cout2),
     heuristiqueGagne(Board, NumeroColonneCourant, Player, Index, Cout3),
     heuristiqueAdverseGagne(Board, NumeroColonneCourant, Player, Index, Cout4),
-    
     Cout is (Cout1 + Cout2 + Cout3 + Cout4 + Cout5),
     NouveauNumeroCourant is NumeroColonneCourant + 1,
     (
         Cout > CoutMax -> ia2(Q, Board, Move, Player, NumeroColonneCourant, Cout, NouveauNumeroCourant)
 	;   ia2(Q, Board, Move, Player, NumeroColonneMax, CoutMax, NouveauNumeroCourant)
 	).
-% testHeuristiqueAdverse(Cout).
-testHeuristiqueAdverse(Cout):-
-  Array = [
-      [ 'X',  'X',  '-',  '-',  '-', '-' ],
-      [ 'X',  'X',  '-',  '-',  '-', '-' ],
-      [ '-',  '-',  '-',  '-',  '-', '-' ],
-      [ 'O',  'O',  '-',  '-',  '-', '-' ],
-      [ '-',  '-',  '-',  '-',  '-', '-' ],
-      [ '-',  '-',  '-',  '-',  '-', '-' ],
-      [ '-',  '-',  '-',  '-',  '-', '-' ]
-  ],
-  heuristiqueAdverseGagne(Array, 2, 'O', 0, Cout).
 
-% l adversaire gagne t il si je joue sur cette case
+testHeuristiqueAdverse(Cout):-
+    Array = [
+        [ 'X',  'X',  '-',  '-',  '-', '-' ],
+        [ 'X',  'X',  '-',  '-',  '-', '-' ],
+        [ '-',  '-',  '-',  '-',  '-', '-' ],
+        [ 'O',  'O',  '-',  '-',  '-', '-' ],
+        [ '-',  '-',  '-',  '-',  '-', '-' ],
+        [ '-',  '-',  '-',  '-',  '-', '-' ],
+        [ '-',  '-',  '-',  '-',  '-', '-' ]
+    ],
+    heuristiqueAdverseGagne(Array, 2, 'O', 0, Cout).
+
+% L'adversaire gagne t'il si je joue sur cette case?
 heuristiqueAdverseGagne(Board, NumeroColonneCourant, Player, Index, Cout):-
     playMove(Board, NewBoard, NumeroColonneCourant, Player, Index),
     changePlayer(Player, NextPlayer),
@@ -342,21 +328,16 @@ heuristiqueAdverseGagne(Board, NumeroColonneCourant, Player, Index, Cout):-
     playMove(NewBoard, NewBoard2, NumeroColonneCourant, NextPlayer, Index1),
     isWinner(NewBoard2, NextPlayer) -> Cout is -8000 ; Cout is 0.
 
-% heuristique de l IA2
+% Heuristique de l'IA2
 heuristiqueVoisins(Board, NumeroColonneCourant, Player, Index, Cout):-
-    write("############### COLONNE TESTEE : "), write(NumeroColonneCourant),
-    writeln(" ###############"),
-
     playMove(Board, NewBoard, NumeroColonneCourant, Player, Index),
 
  	% Récupère la colonne
  	nth0(NumeroColonneCourant, NewBoard, C),
- 	write("Colonne      : "),writeln(C),
     heurCol(C, Index, Player, CoutCol),
 
- 	%Récupère la ligne
+ 	% Récupère la ligne
  	extract(Index, NewBoard, Line),
- 	write("Ligne        : "), writeln(Line),
     heurLine(Line, Player, CoutLigne, 0),
 
     % Récupère la diagonale hd,
@@ -364,28 +345,17 @@ heuristiqueVoisins(Board, NumeroColonneCourant, Player, Index, Cout):-
     decr(Index, I2), decr(NumeroColonneCourant, N2),
     diagonal_bg(NewBoard, I2, N2, [], R2),
     append(R1,R2,DHD),
-    write("Diagonale 1  : "),writeln(DHD),
     heurLine(DHD, Player, CoutDiag1, 0),
 
     diagonal_hg(NewBoard, Index, NumeroColonneCourant, [], R3),
     decr(Index, I4), incr(NumeroColonneCourant, N4),
     diagonal_bd(NewBoard, I4, N4, [], R4),
     append(R3,R4,DHGBD),
-    write("Diagonale 2  : "), writeln(DHGBD),
     heurLine(DHGBD, Player, CoutDiag2, 0),
-
-    %write("COUTLIGNE    : "),writeln(CoutLigne),
-    %write("COUTCOLONNE  : "),writeln(CoutCol),
-    %write("COUTDIAG1    : "),writeln(CoutDiag1),
-    %write("COUTDIAG2    : "),writeln(CoutDiag2),
-
-    %random(0,100, Cout),
-    %Cout is CoutLigne + CoutCol,
-    %write("COUT         : "),writeln(Cout).
 
     Cout is (CoutLigne + CoutCol + CoutDiag1 + CoutDiag2).
 
-% Analyse d un tableau Line pour en sortir le cout total
+% Analyse d'un tableau Line pour en sortir le cout total
 heurLine(Line, _, TotalCost, TotalCost):-
     length(Line, Longueur),
     Longueur < 4.
@@ -398,10 +368,10 @@ heurLine(Line, Player, FinalCost, Cost):-
 	;   count(Player, Quadruplet, Occur), CostQuadruplet is Cost+Occur*Occur*Occur, heurLine(Q, Player, FinalCost, CostQuadruplet)
 	).
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Déroulement du jeu
 
-% The game is not over, we play the next turn
+% Le jeu n'est pas terminé, on passe au prochain tour
 play(Player, Board, Human) :-
 	displayBoard(Board),
 	write('Au tour de : '), writeln(Player),
@@ -411,8 +381,8 @@ play(Player, Board, Human) :-
 	changePlayer(Player, NextPlayer),
 	play(NextPlayer, NewBoard, Human).
 
-% returns the move to be played and the corresponding column index
-% if move is invalid, it loops
+% Retourne le coup à jouer et l'index de la colonne correspondante
+% Si le coup est invalide, on boucle
 currentMove([P1|_], Player, Move, Board) :-
 	Player == 'X',
 	P1 == 1,
@@ -461,7 +431,6 @@ currentMove([_|P2], Player, Move, Board) :-
 	P2 == 2,
     randomIA(Board, Move, Player).
 
-% TBD
 isValidMove(Move, Board) :-
 	Move >= 0,
     Move < 7,
@@ -469,7 +438,7 @@ isValidMove(Move, Board) :-
     Index < 6,
     Index >= 0.
 
-% returns the index of first empty space for a move
+% Retourne l'index du premier espace vide pour un coup
 indexForMove(Board, Move, Index) :-
 	nth0(Move, Board, Col),
     indexForColumn(Col, 0, Index).
@@ -484,48 +453,44 @@ playMove(Board, NewBoard, Move, Player, Index) :-
     nth0(Move, Board, Col),
     applyMoveColumn(Col, NewCol, Index, Player),
     applyMoveBoard(Board, NewBoard, Col, NewCol, Move).
-	% ;Index<7, NewIndex is Index+1, playMove(Board, NewBoard, Move, Player, NewIndex).
 
 applyMoveColumn(Col, NewCol, Index, Player) :-
 	take(Index, Col, T),
     append(T, ['-'|H], Col),
     append(T, [Player|H], NewCol).
-	% take(Index, Col, T), length(T, Index), H is ['-'|Q], H2 is [Player|Q].
 
 applyMoveBoard(Board, NewBoard, Col, NewCol, Move) :-
 	take(Move, Board, T),
     append(T, [Col|H], Board),
     append(T, [NewCol|H], NewBoard).
-    % write(T), nl, write(NewBoard), nl.
-	% length(T, Move), H is [Col|Q], H2 is [NewCol|Q].
 
 changePlayer('X', 'O').
 changePlayer('O', 'X').
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Initialisation du jeu
 
 init :-
-    board(Board),             % Récupération du plateau de jeu
-    humanOrAI(Player, Board, NewBoard),        % Initialisation des joueurs
-    play('X', NewBoard, Player). % Début du jeu
+    board(Board),                        % Récupération du plateau de jeu
+    playerMenu(Player, Board, NewBoard), % Initialisation des joueurs
+    play('X', NewBoard, Player).         % Début du jeu
 
-departs(Board, NewBoard) :-
-     random(0,6, Coup),
-     indexForMove(Board, Coup, Index),
-     playMove(Board, IBoard, Coup, 'X', Index),
-     random(0,6, C2),
-     indexForMove(IBoard, C2, I2),
-     playMove(IBoard, NewBoard, C2, 'O', I2),
-     displayBoard(NewBoard),
-     sleep(1).
+% Ajout de coups aléatoires au début
+% Sert à diversifier les matchs IA1 vs IA2 pour
+% en faire des statistiques
+diversification(Board, NewBoard) :-
+    random(0,6, Coup),
+    indexForMove(Board, Coup, Index),
+    playMove(Board, IBoard, Coup, 'X', Index),
+    random(0,6, C2),
+    indexForMove(IBoard, C2, I2),
+    playMove(IBoard, NewBoard, C2, 'O', I2),
+    displayBoard(NewBoard),
+    sleep(1).
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Prédicats utiles
 
-% Take the first N elements from List and unify this with FirstElements.
-% The definition is based on the GNU-Prolog lists library.
-% Implementation by Jan Wielemaker.
 take(0, _, []) :- !.
 take(N, [H|TA], [H|TB]) :-
 	N > 0,
@@ -534,19 +499,18 @@ take(N, [H|TA], [H|TB]) :-
 
 extract(ColNumber, Matrix, Column) :-
     maplist(nth0(ColNumber), Matrix, Column).
-    % write(Column).
 
-% Incrementation of a variable
+% Incrementation d'une variable
 incr(X,X1) :- X1 is X+1.
 
-% Decrementation of a variable
+% Decrementation d'une variable
 decr(X, X1) :- X1 is X-1.
 
 % X est le dernier élément de la liste Y
 % Sert notamment au prédicat isBoardFull
 last(X,Y) :- append(_,[X],Y).
 
-% renvoie le nombre d'occurrences d'un élément dans une liste
+% Renvoie le nombre d'occurrences d'un élément dans une liste
 count(_, [], 0).
 count(Elem, [Elem|Q], OccurFinal) :-
     !,
